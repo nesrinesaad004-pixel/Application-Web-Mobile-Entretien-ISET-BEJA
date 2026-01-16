@@ -1,0 +1,297 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Main brand colors - Professional blue theme */
+    --background: 220 30% 97%;
+    --foreground: 220 25% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 10%;
+
+    /* Primary - Deep corporate blue */
+    --primary: 217 91% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Soft blue-gray */
+    --secondary: 220 20% 92%;
+    --secondary-foreground: 220 25% 15%;
+
+    --muted: 220 15% 94%;
+    --muted-foreground: 220 10% 45%;
+
+    /* Accent - Teal for actions */
+    --accent: 172 66% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Success - Green for validation */
+    --success: 152 60% 42%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning - Orange for alerts */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 217 91% 40%;
+
+    --radius: 0.75rem;
+
+    /* Game specific colors */
+    --level-inactive: 220 15% 80%;
+    --level-active: 217 91% 40%;
+    --level-completed: 152 60% 42%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 40%) 0%, hsl(217, 91%, 55%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(217, 91%, 25%) 0%, hsl(217, 91%, 45%) 50%, hsl(172, 66%, 40%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(220, 30%, 98%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(152, 60%, 42%) 0%, hsl(152, 60%, 50%) 100%);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(220 25% 10% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(220 25% 10% / 0.1), 0 2px 4px -2px hsl(220 25% 10% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(220 25% 10% / 0.1), 0 4px 6px -4px hsl(220 25% 10% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(220 25% 10% / 0.1), 0 8px 10px -6px hsl(220 25% 10% / 0.1);
+    --shadow-glow: 0 0 30px hsl(217 91% 40% / 0.3);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 220 25% 8%;
+    --foreground: 220 20% 95%;
+
+    --card: 220 25% 12%;
+    --card-foreground: 220 20% 95%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 220 20% 95%;
+
+    --primary: 217 91% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 220 20% 90%;
+
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 15% 60%;
+
+    --accent: 172 66% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --success: 152 60% 50%;
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 217 91% 55%;
+
+    --level-inactive: 220 15% 30%;
+    --level-active: 217 91% 55%;
+    --level-completed: 152 60% 50%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 45%) 0%, hsl(217, 91%, 60%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(217, 91%, 15%) 0%, hsl(217, 91%, 35%) 50%, hsl(172, 66%, 35%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(220, 25%, 12%) 0%, hsl(220, 25%, 10%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(152, 60%, 45%) 0%, hsl(152, 60%, 55%) 100%);
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .gradient-success {
+    background: var(--gradient-success);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@layer components {
+  .game-card {
+    @apply relative overflow-hidden rounded-xl border border-border bg-card p-6 transition-all duration-300;
+    box-shadow: var(--shadow-md);
+  }
+
+  .game-card:hover {
+    @apply -translate-y-1;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .game-card.selected {
+    @apply border-primary ring-2 ring-primary/20;
+    box-shadow: var(--shadow-glow);
+  }
+
+  .game-card.correct {
+    @apply border-success bg-success/5;
+  }
+
+  .game-card.incorrect {
+    @apply border-destructive bg-destructive/5;
+  }
+
+  .level-indicator {
+    @apply flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300;
+  }
+
+  .level-indicator.inactive {
+    @apply bg-muted text-muted-foreground;
+  }
+
+  .level-indicator.active {
+    @apply gradient-primary text-primary-foreground shadow-glow;
+  }
+
+  .level-indicator.completed {
+    @apply gradient-success text-success-foreground;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(217 91% 40% / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(217 91% 40% / 0.5);
+  }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+.animate-checkmark {
+  animation: checkmark 0.4s ease-out forwards;
+}
+
+/* Stagger animations for cards */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.15s; }
+.stagger-3 { animation-delay: 0.2s; }
+.stagger-4 { animation-delay: 0.25s; }
+.stagger-5 { animation-delay: 0.3s; }
+.stagger-6 { animation-delay: 0.35s; }
+.stagger-7 { animation-delay: 0.4s; }
+.stagger-8 { animation-delay: 0.45s; }
