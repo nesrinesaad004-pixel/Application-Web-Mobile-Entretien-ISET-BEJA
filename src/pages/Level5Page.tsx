@@ -40,9 +40,9 @@ const scenarios = [
     question: "Un collègue vous demande de l'aide alors que vous êtes très occupé. Que faites-vous ?",
     options: [
       { id: 'a', label: 'Je lui dis que je suis débordé et qu\'il a qu\'à se débrouiller tout seul.', isCorrect: false },
-      { id: 'b', label: 'Je regarde rapidement son problème et je lui indique où chercher ou je bloque 15-20 min plus tard dans la journée pour l\'aider.', isCorrect: false },
+      { id: 'b', label: 'Je regarde rapidement son problème et je lui indique où chercher ou je bloque 15-20 min plus tard dans la journée pour l\'aider.', isCorrect: True },
       { id: 'c', label: 'Je l\'aide immédiatement en mettant mon propre travail de côté, même si ça me met en retard.', isCorrect: false },
-      { id: 'd', label: " Je lui dis d'attendre que le chef le remarque puis je décide de l’aider .", isCorrect: true },
+      { id: 'd', label: " Je lui dis d'attendre que le chef le remarque puis je décide de l’aider .", isCorrect: false },
     ],
     multipleAnswers: false,
   },
