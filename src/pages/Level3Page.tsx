@@ -12,9 +12,9 @@ import { Loader2 } from 'lucide-react';
 
 const mailBlocks = [
   { id: 'salutation', content: 'Chère Madame Fatma,', order: 1 },
-  { id: 'remerciement', content: 'Je vous remercie de votre invitation et vous confirme ma présence à l\'entretien de stage PFE à TechTunis.', order: 2 },
+  { id: 'remerciement', content: 'Je vous remercie de votre invitation et je confirme ma présence à l\'entretien de stage PFE à TechTunis.', order: 2 },
   { id: 'disponibilite', content: 'Je reste disponible pour toute information complémentaire.', order: 3 },
-  { id: 'signature', content: 'Cordialement,', order: 4 },
+  { id: 'signature', content: 'Respectueusement,', order: 4 },
 ];
 
 export default function Level3Page() {
