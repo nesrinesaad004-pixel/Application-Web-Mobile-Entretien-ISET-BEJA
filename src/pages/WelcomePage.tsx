@@ -66,7 +66,9 @@ export default function WelcomePage() {
 <div className="text-center mt-8">
   <button
     onClick={() => setShowQR(!showQR)}
-    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+    className="flex items-center gap-2 px-4 py-2 rounded-lg 
+               bg-blue-600 text-white hover:bg-blue-700 
+               transition-colors shadow-md"
   >
     {showQR ? (
       <>
@@ -95,7 +97,7 @@ export default function WelcomePage() {
         alt="QR Code pour jouer sur mobile"
         className="w-full h-auto"
       />
-      <p className="text-sm text-muted-foreground mt-2 text-center">
+      <p className="text-sm text-gray-500 mt-2 text-center">
         Scannez pour jouer sur mobile
       </p>
     </div>
