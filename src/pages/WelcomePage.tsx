@@ -64,32 +64,7 @@ export default function WelcomePage() {
             </div>
           ))}
         </div>
-{/* QR Code Section */}
-        <div className="mb-8 animate-fade-in" style={{ animationDelay: '550ms' }}>
-          <button
-            onClick={() => setShowQR(!showQR)}
-            className="flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition-colors"
-          >
-            <QrCode className="h-5 w-5" />
-            <span className="text-sm font-medium">
-              {showQR ? "Masquer le QR Code" : "Afficher le QR Code pour mobile"}
-            </span>
-          </button>
-          
-          {showQR && (
-            <div className="mt-4 p-4 bg-card rounded-xl shadow-xl animate-fade-in">
-              <QRCodeSVG
-                value={gameUrl}
-                size={180}
-                level="H"
-                includeMargin
-                className="mx-auto"
-              />
-              <p className="text-xs text-center text-muted-foreground mt-2">
-                Scannez pour jouer sur mobile
-              </p>
-            </div>
-          )}
+
         {/* CTA Button */}
         <div className="animate-fade-in" style={{ animationDelay: '600ms' }}>
           <Button
