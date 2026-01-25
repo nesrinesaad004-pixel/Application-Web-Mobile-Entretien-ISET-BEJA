@@ -98,7 +98,7 @@ export default function WelcomePage() {
         className="w-full h-auto"
       />
       <p className="text-sm text-gray-500 mt-2 text-center">
-        Scannez pour jouer sur mobile
+        Scannez pour jouer 
       </p>
     </div>
   )}
