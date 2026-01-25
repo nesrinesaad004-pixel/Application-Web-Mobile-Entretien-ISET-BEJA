@@ -62,7 +62,7 @@ const scenarios = [
     question: 'Que faites-vous si vous ne comprenez pas une consigne donnée par votre supérieur ?',
     options: [
       { id: 'a', label: 'Je commence directement le développement en interprétant comme je peux.', isCorrect: false },
-      { id: 'b', label: 'Je repose immédiatement des questions pour clarifier les attentes et je reformule avec mes mots pour valider ma compréhension.', isCorrect: true },
+      { id: 'b', label: 'Je pose immédiatement des questions pour clarifier les attentes et je reformule avec mes mots pour valider ma compréhension.', isCorrect: true },
       { id: 'c', label: 'Je fais exactement ce qu\'il a dit même si ça me semble bizarre, « c\'est le chef qui décide ».', isCorrect: false },
       { id: 'd', label: 'Je délègue la tâche à un autre stagiaire pour ne pas prendre de risque.', isCorrect: false },
     ],
