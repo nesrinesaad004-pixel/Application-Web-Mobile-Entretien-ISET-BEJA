@@ -85,7 +85,7 @@ export default function WelcomePage() {
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
           <path d="M7 7h10v10H7z"></path>
         </svg>
-        Afficher le QR Code pour mobile
+        Afficher le QR Code 
       </>
     )}
   </button>
