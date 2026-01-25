@@ -15,9 +15,10 @@ import AutoEvaluationPage from "./pages/AutoEvaluationPage"; // ✅ Importé
 import ResultPage from "./pages/ResultPage";
 import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
+import { useState } from 'react';
 
 const queryClient = new QueryClient();
-
+const [showQR, setShowQR] = useState(false);
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
