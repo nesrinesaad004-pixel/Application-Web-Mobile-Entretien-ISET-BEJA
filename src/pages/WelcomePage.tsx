@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Briefcase, Users, Target, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 
 export default function WelcomePage() {
   const navigate = useNavigate();
+  const [showQR, setShowQR] = useState(false);
 
   return (
     <div className="min-h-screen gradient-hero flex flex-col">
