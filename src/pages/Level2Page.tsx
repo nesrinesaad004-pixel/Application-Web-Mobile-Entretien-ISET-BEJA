@@ -6,7 +6,7 @@ import { LevelHeader } from '@/components/game/LevelHeader';
 import { ProgressBar } from '@/components/game/ProgressBar';
 import { GameTimer } from '@/components/game/GameTimer';
 import { QualityCard } from '@/components/game/QualityCard';
-import { ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Import quality images
@@ -42,10 +42,10 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 
 export default function Level2Page() {
   const navigate = useNavigate();
-  const { gameState, setLevel1Choices, completeLevel } = useGame();
+  const { completeLevel } = useGame();
   const [selectedQualities, setSelectedQualities] = useState<string[]>([]);
   const [hasValidated, setHasValidated] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [score, setScore] = useState(0);
 
   // Shuffle qualities once on mount
   const qualities = useMemo(() => shuffleArray(baseQualities), []);
@@ -60,7 +60,6 @@ export default function Level2Page() {
     
     window.history.pushState(null, '', window.location.pathname);
     window.addEventListener('popstate', handlePopState);
-    
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
@@ -85,39 +84,39 @@ export default function Level2Page() {
       return;
     }
 
-    const correctQualities = qualities.filter((q) => q.isCorrect).map((q) => q.id);
-    const allCorrect = correctQualities.every((q) => selectedQualities.includes(q));
+    // 🔥 Calcul du score : +5 pour chaque bonne, -5 pour chaque mauvaise
+    let calculatedScore = 0;
+    selectedQualities.forEach(id => {
+      const quality = baseQualities.find(q => q.id === id);
+      if (quality) {
+        if (quality.isCorrect) {
+          calculatedScore += 5;
+        } else {
+          calculatedScore -= 5;
+        }
+      }
+    });
 
+    // Empêche le score négatif
+    calculatedScore = Math.max(0, calculatedScore);
+
+    setScore(calculatedScore);
     setHasValidated(true);
-    setIsCorrect(allCorrect);
-    setLevel1Choices(selectedQualities);
+    completeLevel(2, calculatedScore);
 
-    if (allCorrect) {
-      toast.success('Bravo ! Vous avez identifié les 4 qualités essentielles ! +20 points');
+    // Feedback immédiat
+    if (calculatedScore === 20) {
+      toast.success(`Excellent ! ${calculatedScore}/20 points.`);
+    } else if (calculatedScore >= 10) {
+      toast.info(`Bon travail ! ${calculatedScore}/20 points.`);
     } else {
-      // 🔥 Pas de révélation des bonnes réponses
-      toast.error('Ce n\'est pas tout à fait correct. Réessayez !');
-    }
-  };
-
-  // 🔥 NOUVELLE FONCTION : Calculer le score et afficher un message
-  const handleContinue = () => {
-    const totalScore = isCorrect ? 20 : 0; // 🔥 Niveau 2 = tout ou rien (20 ou 0)
-    completeLevel(2, totalScore);
-
-    if (totalScore === 20) {
-      toast.success(`Excellent ! Vous avez obtenu ${totalScore}/20 points au niveau 2.`);
-    } else {
-      toast.warning(`Vous avez obtenu ${totalScore}/20 points au niveau 2. Révisez vos qualités !`);
+      toast.warning(`${calculatedScore}/20 points. Révisez vos qualités !`);
     }
 
-    navigate('/niveau-3');
-  };
-
-  const handleRetry = () => {
-    setSelectedQualities([]);
-    setHasValidated(false);
-    setIsCorrect(false);
+    // ➡️ Passage automatique au niveau 3 après 2 secondes
+    setTimeout(() => {
+      navigate('/niveau-3');
+    }, 2000);
   };
 
   return (
@@ -126,7 +125,7 @@ export default function Level2Page() {
         {/* Progress and Timer */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex-1">
-          <ProgressBar currentLevel={2} completedLevels={[]} />
+            <ProgressBar currentLevel={2} completedLevels={[]} />
           </div>
           <div className="ml-4">
             <GameTimer />
@@ -141,7 +140,7 @@ export default function Level2Page() {
           character="Mme Fatma (RH) vous demande une auto-évaluation..."
         />
 
-        {/* Context text from PDF */}
+        {/* Context text */}
         <div className="bg-muted/50 rounded-xl p-4 mb-6 animate-fade-in" style={{ animationDelay: '150ms' }}>
           <p className="text-muted-foreground text-sm leading-relaxed">
             Pour réussir chez TechTunis, vous devez avoir une grande précision dans l'exécution des tâches et une volonté constante de s'informer pour progresser. 
@@ -178,9 +177,9 @@ export default function Level2Page() {
           ))}
         </div>
 
-        {/* Validation / Feedback */}
-        <div className="flex flex-col items-center gap-4 animate-fade-in" style={{ animationDelay: '700ms' }}>
-          {!hasValidated && (
+        {/* Validation */}
+        {!hasValidated && (
+          <div className="flex justify-center animate-fade-in" style={{ animationDelay: '700ms' }}>
             <Button
               size="lg"
               onClick={handleValidate}
@@ -189,35 +188,43 @@ export default function Level2Page() {
               Valider ma sélection
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-          )}
+          </div>
+        )}
 
-          {hasValidated && !isCorrect && (
-            <div className="text-center">
-              <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-4">
-                <p className="text-destructive font-medium">
-                  Ce n'est pas tout à fait correct. Réessayez !
-                </p>
-              </div>
-              <Button size="lg" variant="outline" onClick={handleRetry}>
-                Réessayer
-              </Button>
+        {/* 🔥 Affichage des bonnes réponses après validation */}
+        {hasValidated && (
+          <div className="mt-6 p-4 bg-muted rounded-xl animate-fade-in">
+            <p className="font-medium text-muted-foreground mb-3">Récapitulatif des réponses :</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {baseQualities.map(quality => {
+                const isSelected = selectedQualities.includes(quality.id);
+                const isCorrect = quality.isCorrect;
+                
+                return (
+                  <div 
+                    key={quality.id}
+                    className={`p-3 rounded-lg text-center ${
+                      isCorrect && isSelected 
+                        ? 'bg-green-100 border border-green-300' 
+                        : isCorrect && !isSelected 
+                          ? 'bg-green-50 text-green-800'
+                          : !isCorrect && isSelected 
+                            ? 'bg-red-100 border border-red-300'
+                            : 'bg-gray-50 text-gray-500'
+                    }`}
+                  >
+                    <div className="font-medium text-xs mb-1">{quality.label}</div>
+                    {isCorrect ? (
+                      <CheckCircle2 className="h-4 w-4 text-green-600 mx-auto" />
+                    ) : (
+                      <XCircle className="h-4 w-4 text-red-500 mx-auto" />
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          )}
-
-          {hasValidated && isCorrect && (
-            <div className="text-center">
-              <div className="bg-success/10 border border-success/20 rounded-xl p-4 mb-4">
-                <p className="text-success font-medium">
-                  Excellent ! Vous avez correctement identifié les qualités essentielles pour un stage PFE.
-                </p>
-              </div>
-              <Button size="lg" variant="success" onClick={handleContinue}>
-                Passer au niveau suivant
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
