@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { LevelHeader } from '@/components/game/LevelHeader';
 import { ProgressBar } from '@/components/game/ProgressBar';
 import { GameTimer } from '@/components/game/GameTimer';
-import { ArrowRight, CheckCircle2, Volume2, VolumeX, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+
 // Import new avatar images
 import avatarProfessionnel from '@/assets/avatars/avatar-professionnel.jpg';
 import avatarDecontracte from '@/assets/avatars/avatar-decontracte.jpg';
@@ -54,9 +55,9 @@ export default function Level4Page() {
   const [blocks, setBlocks] = useState(() => shuffleArray(pitchBlocks));
   const [hasValidated, setHasValidated] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [avatarValidated, setAvatarValidated] = useState(false);
   const [avatarCorrect, setAvatarCorrect] = useState(false);
+  const [isPlayingAndNavigating, setIsPlayingAndNavigating] = useState(false);
 
   // Prevent back navigation
   useEffect(() => {
@@ -72,7 +73,9 @@ export default function Level4Page() {
   }, []);
 
   const handleAvatarSelect = (id: string) => {
-    setSelectedAvatar(id);
+    if (!avatarValidated) {
+      setSelectedAvatar(id);
+    }
   };
 
   const handleAvatarConfirm = () => {
@@ -81,25 +84,18 @@ export default function Level4Page() {
       return;
     }
     
-    const selected = avatars.find(a => a.id === selectedAvatar);
+    const isCorrect = avatars.find(a => a.id === selectedAvatar)?.isCorrect || false;
+    setAvatarCorrect(isCorrect);
     setAvatarValidated(true);
-    
-    if (selected?.isCorrect) {
-      setAvatarCorrect(true);
+
+    if (isCorrect) {
       toast.success('Excellent choix ! +10 points');
     } else {
-      setAvatarCorrect(false);
-      toast.error('Cette tenue n\'est pas appropriée. 0 point.');
+      toast.error('Cette tenue n\'est pas appropriée. La bonne réponse vous est affichée.');
     }
 
-    // 🔥 Toujours passer à l'étape 2 après validation
+    // ➡️ Passage automatique à l'étape 2 après 1.5s
     setTimeout(() => setStep(2), 1500);
-  };
-
-  const handleAvatarRetry = () => {
-    setSelectedAvatar(null);
-    setAvatarValidated(false);
-    setAvatarCorrect(false);
   };
 
   // Move block up or down using buttons (mobile-friendly)
@@ -128,63 +124,39 @@ export default function Level4Page() {
     if (correct) {
       toast.success('Excellent ! Votre pitch est parfaitement structuré ! +10 points');
     } else {
-      toast.error('L\'ordre n\'est pas optimal. Réessayez !');
+      toast.error('L\'ordre n\'est pas optimal. La bonne réponse vous est affichée.');
     }
   };
 
-  const handleRetry = () => {
-    setBlocks(shuffleArray(pitchBlocks));
-    setHasValidated(false);
-    setIsCorrect(false);
-  };
-  const [isPlayingAndNavigating, setIsPlayingAndNavigating] = useState(false);
+  const handleContinue = () => {
+    const avatarScore = avatarCorrect ? 10 : 0;
+    const pitchScore = isCorrect ? 10 : 0;
+    const totalScore = avatarScore + pitchScore;
+    completeLevel(4, totalScore);
 
-  // 🔥 NOUVELLE FONCTION : Calculer le score (10 + 10) et afficher un message
-const handleContinue = () => {
-  const avatarScore = avatarCorrect ? 10 : 0;
-  const pitchScore = isCorrect ? 10 : 0;
-  const totalScore = avatarScore + pitchScore;
-  completeLevel(4, totalScore);
-        if (totalScore === 20) {
+    if (totalScore === 20) {
       toast.success(`Excellent ! Vous avez obtenu ${totalScore}/20 points au niveau 4.`);
     } else {
-      toast.warning(`Vous avez obtenu ${totalScore}/20 points au niveau 4. `);
-    }
-     setIsPlayingAndNavigating(true);
-
-  // 🔥 Lance la lecture du pitch
-  const pitchText = blocks.map(b => b.content).join(' ');
-  const utterance = new SpeechSynthesisUtterance(pitchText);
-  utterance.lang = 'fr-FR';
-  utterance.rate = 0.9;
-
-  utterance.onend = () => {
-    navigate('/niveau-5');
-  };
-
-  utterance.onerror = () => {
-    setTimeout(() => navigate('/niveau-5'), 1000);
-  };
-
-  speechSynthesis.speak(utterance);
-};
-
-  const playPitchAudio = () => {
-    if (isPlaying) {
-      window.speechSynthesis.cancel();
-      setIsPlaying(false);
-      return;
+      toast.warning(`Vous avez obtenu ${totalScore}/20 points au niveau 4.`);
     }
 
-    const pitchText = blocks.map(b => b.content).join(' ');
-    const utterance = new SpeechSynthesisUtterance(pitchText);
-    utterance.lang = 'fr-FR';
-    utterance.rate = 0.9;
-    utterance.onend = () => setIsPlaying(false);
-    utterance.onerror = () => setIsPlaying(false);
-    
-    setIsPlaying(true);
-    window.speechSynthesis.speak(utterance);
+    if (isCorrect) {
+      // 🔥 Audio SEULEMENT si pitch correct
+      setIsPlayingAndNavigating(true);
+      
+      const pitchText = blocks.map(b => b.content).join(' ');
+      const utterance = new SpeechSynthesisUtterance(pitchText);
+      utterance.lang = 'fr-FR';
+      utterance.rate = 0.9;
+
+      utterance.onend = () => navigate('/niveau-5');
+      utterance.onerror = () => setTimeout(() => navigate('/niveau-5'), 1500);
+
+      speechSynthesis.speak(utterance);
+    } else {
+      // ❌ Pas d'audio si pitch faux
+      setTimeout(() => navigate('/niveau-5'), 1500);
+    }
   };
 
   return (
@@ -218,49 +190,21 @@ const handleContinue = () => {
               {avatars.map((avatar) => (
                 <button
                   key={avatar.id}
-                  onClick={() => !avatarValidated && handleAvatarSelect(avatar.id)}
+                  onClick={() => handleAvatarSelect(avatar.id)}
                   disabled={avatarValidated}
                   className={cn(
                     "game-card flex flex-col items-center gap-3 py-6 cursor-pointer transition-all",
                     selectedAvatar === avatar.id && !avatarValidated && "selected",
                     selectedAvatar === avatar.id && avatarValidated && avatarCorrect && "border-success bg-success/10",
                     selectedAvatar === avatar.id && avatarValidated && !avatarCorrect && "border-destructive bg-destructive/10",
-                    avatarValidated && "cursor-not-allowed opacity-70",
-                    avatarValidated && selectedAvatar === avatar.id && "opacity-100"
+                    avatarValidated && "cursor-not-allowed opacity-70"
                   )}
                 >
                   <img src={avatar.image} alt={avatar.label} className="w-20 h-20 rounded-full object-cover" />
                   <span className="font-medium text-foreground">{avatar.label}</span>
-                  {avatarValidated && avatar.isCorrect && (
-                    <span className="text-xs text-success font-medium">✓ Tenue soignée</span>
-                  )}
                 </button>
               ))}
             </div>
-
-            {/* Avatar Validation Feedback */}
-            {avatarValidated && !avatarCorrect && (
-              <div className="text-center mb-6">
-                <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-4">
-                  <p className="text-destructive font-medium">
-                    Cette tenue n'est pas appropriée pour un entretien professionnel. Choisissez une tenue soignée.
-                  </p>
-                </div>
-                <Button size="lg" variant="outline" onClick={handleAvatarRetry}>
-                  Réessayer
-                </Button>
-              </div>
-            )}
-
-            {avatarValidated && avatarCorrect && (
-              <div className="text-center mb-6">
-                <div className="bg-success/10 border border-success/20 rounded-xl p-4">
-                  <p className="text-success font-medium">
-                    Excellent choix ! Une tenue soignée est essentielle pour faire bonne impression.
-                  </p>
-                </div>
-              </div>
-            )}
 
             {!avatarValidated && (
               <div className="flex justify-center">
@@ -270,10 +214,25 @@ const handleContinue = () => {
                 </Button>
               </div>
             )}
+
+            {/* Affichage de la bonne réponse après validation */}
+            {avatarValidated && (
+              <div className="mt-4 p-3 bg-muted rounded-lg">
+                <p className="font-medium text-muted-foreground">Bonne réponse :</p>
+                <div className="flex items-center gap-3 mt-2">
+                  <img 
+                    src={avatars.find(a => a.isCorrect)?.image} 
+                    alt="Tenue soignée" 
+                    className="w-12 h-12 rounded-full object-cover" 
+                  />
+                  <span>Soigné – Tenue professionnelle</span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Step 2: Pitch Order with numbered buttons */}
+        {/* Step 2: Pitch Order */}
         {step === 2 && (
           <div className="animate-fade-in">
             <div className="flex items-center justify-center gap-4 mb-6">
@@ -292,7 +251,7 @@ const handleContinue = () => {
               </div>
             </div>
 
-            {/* Blocks with Up/Down buttons (mobile-friendly) */}
+            {/* Blocks with Up/Down buttons */}
             <div className="bg-card border-2 border-dashed border-border rounded-2xl p-4 md:p-6 mb-8">
               <div className="space-y-3">
                 {blocks.map((block, index) => (
@@ -307,15 +266,10 @@ const handleContinue = () => {
                         : "border-border bg-background"
                     )}
                   >
-                    {/* Position number */}
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
                       {index + 1}
                     </div>
-                    
-                    {/* Block content */}
                     <p className="flex-1 text-foreground text-sm md:text-base">{block.content}</p>
-                    
-                    {/* Up/Down buttons (always visible for mobile) */}
                     {!hasValidated && (
                       <div className="flex flex-col gap-1">
                         <button
@@ -351,53 +305,51 @@ const handleContinue = () => {
               </div>
             </div>
 
-            
-
-            {/* Validation / Actions */}
-            <div className="flex flex-col items-center gap-4">
-          {!hasValidated && (
-            <Button size="lg" onClick={handleValidate}>
-             Valider mon pitch
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          )}
-                {hasValidated && !isCorrect && (
-            <div className="text-center">
-              <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-4">
-                <p className="text-destructive font-medium">
-L'ordre n'est pas optimal. Commencez par la salutation, puis présentez-vous, expliquez votre motivation et concluez
-                </p>
+            {/* Validation */}
+            {!hasValidated && (
+              <div className="flex justify-center">
+                <Button size="lg" onClick={handleValidate}>
+                  Valider mon pitch
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
-              <Button size="lg" variant="outline" onClick={handleRetry}>
-                Réessayer
-              </Button>
-            </div>
-          )}
+            )}
 
-              {hasValidated && isCorrect && (
-  <div className="text-center">
-    <div className="bg-success/10 border border-success/20 rounded-xl p-4 mb-4">
-      <p className="text-success font-medium">Excellent travail !</p>
-    </div>
+            {/* Après validation */}
+            {hasValidated && (
+              <>
+                {/* Bonne réponse */}
+                <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-2xl">
+                  <p className="font-medium text-muted-foreground mb-3">Bonne réponse :</p>
+                  <div className="space-y-2">
+                    {pitchBlocks.map((block, index) => (
+                      <div key={block.id} className="p-3 rounded-lg bg-background border">
+                        <span className="text-xs font-bold text-muted-foreground mr-2">{index + 1}.</span>
+                        {block.content}
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-    {isPlayingAndNavigating ? (
-      <div className="flex flex-col items-center gap-2">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">
-         😊 Veuillez patienter ➡️
-        </p>
-      </div>
-    ) : (
-      <Button size="lg" variant="success" onClick={handleContinue}>
-        Passer au niveau suivant
-        <ArrowRight className="ml-2 h-5 w-5" />
-      </Button>
-    )}
-  </div>
-)}
-
-
-            </div>
+                {/* Bouton unique */}
+                {isCorrect && isPlayingAndNavigating ? (
+                  <div className="flex flex-col items-center gap-2 mt-4">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                    <p className="text-sm text-muted-foreground">😊 Lecture en cours…</p>
+                  </div>
+                ) : (
+                  <Button 
+                    size="lg" 
+                    variant="default" 
+                    onClick={handleContinue}
+                    className="mt-4"
+                  >
+                    Passer au niveau suivant
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                )}
+              </>
+            )}
           </div>
         )}
       </div>
