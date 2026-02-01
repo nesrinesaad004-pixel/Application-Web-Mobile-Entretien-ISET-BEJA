@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { LevelHeader } from '@/components/game/LevelHeader';
 import { ProgressBar } from '@/components/game/ProgressBar';
 import { GameTimer } from '@/components/game/GameTimer';
-import { ArrowRight, Mail, CheckCircle2, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowRight, Mail, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
@@ -75,29 +75,35 @@ export default function Level3Page() {
     const totalScore = isCorrect ? 20 : 0;
     completeLevel(3, totalScore);
 
-    if (totalScore === 20) {
+    if (isCorrect) {
       toast.success(`Excellent ! Vous avez obtenu ${totalScore}/20 points au niveau 3.`);
+      
+      // 🔥 Lance l'audio SEULEMENT si correct
+      setIsPlayingAndNavigating(true);
+      
+      const fullText = blocks.map(b => b.content).join(' ');
+      const utterance = new SpeechSynthesisUtterance(fullText);
+      utterance.lang = 'fr-FR';
+      utterance.rate = 0.9;
+
+      utterance.onend = () => {
+        navigate('/niveau-4');
+      };
+
+      utterance.onerror = () => {
+        setTimeout(() => navigate('/niveau-4'), 1500);
+      };
+
+      speechSynthesis.speak(utterance);
     } else {
+      // ❌ Pas d'audio si faux
       toast.warning(`Vous avez obtenu ${totalScore}/20 points au niveau 3.`);
+      
+      // ➡️ Passe directement au niveau 4
+      setTimeout(() => {
+        navigate('/niveau-4');
+      }, 1500);
     }
-
-    // 🔥 Active le feedback visuel
-    setIsPlayingAndNavigating(true);
-
-    const fullText = blocks.map(b => b.content).join(' ');
-    const utterance = new SpeechSynthesisUtterance(fullText);
-    utterance.lang = 'fr-FR';
-    utterance.rate = 0.9;
-
-    utterance.onend = () => {
-      navigate('/niveau-4');
-    };
-
-    utterance.onerror = () => {
-      setTimeout(() => navigate('/niveau-4'), 1500);
-    };
-
-    speechSynthesis.speak(utterance);
   };
 
   return (
@@ -234,13 +240,11 @@ export default function Level3Page() {
                 </div>
               </div>
 
-              {/* Bouton unique */}
-              {isPlayingAndNavigating ? (
+              {/* Bouton unique avec gestion audio conditionnelle */}
+              {isCorrect && isPlayingAndNavigating ? (
                 <div className="flex flex-col items-center gap-2 mt-4">
                   <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  <p className="text-sm text-muted-foreground">
-                    😊 Veuillez patienter ➡️.
-                  </p>
+                  <p className="text-sm text-muted-foreground">😊 Lecture en cours…</p>
                 </div>
               ) : (
                 <Button 
@@ -249,7 +253,7 @@ export default function Level3Page() {
                   onClick={handleContinue}
                   className="mt-4"
                 >
-                  {isCorrect ? 'Passer au niveau suivant' : 'Continuer malgré l’erreur'}
+                  Passer au niveau suivant
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               )}
