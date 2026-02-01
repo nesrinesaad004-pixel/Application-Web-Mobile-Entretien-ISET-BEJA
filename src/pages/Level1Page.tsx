@@ -32,7 +32,7 @@ const valueOptions = [
 
 export default function Level1Page() {
   const navigate = useNavigate();
-  const { gameState, setLevel2Domain, setLevel2Values, completeLevel } = useGame();
+  const { completeLevel } = useGame();
   
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedDomain, setSelectedDomain] = useState<string>('');
@@ -70,74 +70,61 @@ export default function Level1Page() {
     });
   };
 
-const handleValidate = () => {
-  const correctOrder = mailBlocks.map(b => b.id);
-  const currentOrder = blocks.map(b => b.id);
-  const isAnswerCorrect = correctOrder.every((id, index) => id === currentOrder[index]);
+  // ✅ ÉTAPE 1 : Validation du domaine
+  const handleValidateDomain = () => {
+    const isCorrect = selectedDomain === 'C'; // seule option correcte
+    setDomainCorrect(isCorrect);
+    setDomainValidated(true);
 
-  const score = isAnswerCorrect ? 20 : 0;
-  completeLevel(1, score); // Sauvegarde immédiatement
+    const domainScore = isCorrect ? 10 : 0;
+    // On ne sauvegarde pas encore — on attend l'étape 2
 
-  if (isAnswerCorrect) {
-    toast.success("Excellent ! Vous maîtrisez la structure d'un mail professionnel.");
-  } else {
-    toast.error("La réponse est incorrecte. La bonne réponse vous sera affichée.");
-  }
+    if (isCorrect) {
+      toast.success("Excellent choix !");
+      setTimeout(() => setStep(2), 1500);
+    } else {
+      toast.error("Mauvais choix. La bonne réponse vous sera affichée.");
+      // Affiche la bonne réponse puis passe à l'étape 2 après 2s
+      setTimeout(() => {
+        setStep(2);
+      }, 2000);
+    }
+  };
 
-  // ➡️ Passe automatiquement au niveau 2 après 2 secondes
-  setTimeout(() => {
-    navigate('/niveau-2');
-  }, 2000);
-};
-
+  // ✅ ÉTAPE 2 : Validation des valeurs
   const handleValidateValues = () => {
     if (selectedValues.length !== 4) {
       toast.error('Veuillez sélectionner exactement 4 valeurs');
       return;
     }
 
-    const correctValues = valueOptions.filter((v) => v.isCorrect).map((v) => v.id);
-    const allCorrect = correctValues.every((v) => selectedValues.includes(v));
+    const correctValues = valueOptions.filter(v => v.isCorrect).map(v => v.id);
+    let score = 0;
+    selectedValues.forEach(id => {
+      if (correctValues.includes(id)) {
+        score += 2.5;
+      }
+    });
 
-    setValuesValidated(true);
-    setValuesCorrect(allCorrect);
-    setLevel2Values(selectedValues);
-
-    if (allCorrect) {
-      toast.success('Excellent ! +10 points');
-    } else {
-      toast.error('Ce n\'est pas tout à fait correct. 0 point.');
-    }
-  };
-
-  // 🔥 Affiche le score final et passe au niveau suivant
-  const handleContinue = () => {
+    const valuesScore = score; // entre 0 et 10
     const domainScore = domainCorrect ? 10 : 0;
-    const valuesScore = valuesCorrect ? 10 : 0;
     const totalScore = domainScore + valuesScore;
 
     completeLevel(1, totalScore);
 
-    // Message adapté au score
+    // Affiche feedback
     if (totalScore === 20) {
-      toast.success(`Félicitations ! Vous avez obtenu ${totalScore}/20 points au niveau 1.`);
-    } else if (totalScore === 10) {
-      toast.info(`Bon travail ! Vous avez obtenu ${totalScore}/20 points au niveau 1.`);
+      toast.success(`Félicitations ! ${totalScore}/20 points.`);
+    } else if (totalScore >= 10) {
+      toast.info(`Bon travail ! ${totalScore}/20 points.`);
     } else {
-      toast.warning(`Vous avez obtenu ${totalScore}/20 points au niveau 1. Révisez l'entreprise !`);
+      toast.warning(`${totalScore}/20 points. Révisez l'entreprise.`);
     }
 
-    navigate('/niveau-2');
-  };
-
-  const handleRetryDomain = () => {
-    setSelectedDomain('');
-    setDomainValidated(false);
-  };
-
-  const handleRetryValues = () => {
-    setSelectedValues([]);
-    setValuesValidated(false);
+    // ➡️ Passe automatiquement au niveau 2 après 2s
+    setTimeout(() => {
+      navigate('/niveau-2');
+    }, 2000);
   };
 
   return (
@@ -146,7 +133,7 @@ const handleValidate = () => {
         {/* Progress and Timer */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex-1">
-           <ProgressBar currentLevel={1} completedLevels={[]} />
+            <ProgressBar currentLevel={1} completedLevels={[]} />
           </div>
           <div className="ml-4">
             <GameTimer />
@@ -173,14 +160,13 @@ const handleValidate = () => {
           </div>
           <p className="text-muted-foreground leading-relaxed">
             TechTunis est une entreprise tunisienne spécialisée dans les solutions ERP personnalisées et 
-le développement web/mobile pour PME tunisiennes. Sa mission est de rendre la 
-transformation digitale accessible et rentable pour les entreprises locales, en tenant compte 
-de leurs besoins.
-
-TechTunis se caractérise par l'utilisation de technologies modernes, le travail en équipe, la 
-qualité du travail et la compréhension des besoins des entreprises.
+            le développement web/mobile pour PME tunisiennes. Sa mission est de rendre la 
+            transformation digitale accessible et rentable pour les entreprises locales, en tenant compte 
+            de leurs besoins.
+            <br /><br />
+            TechTunis se caractérise par l'utilisation de technologies modernes, le travail en équipe, la 
+            qualité du travail et la compréhension des besoins des entreprises.
           </p>
-  
         </div>
 
         {/* Step 1: Domain Question */}
@@ -217,19 +203,22 @@ qualité du travail et la compréhension des besoins des entreprises.
               ))}
             </RadioGroup>
 
-            <div className="flex justify-center gap-4">
-              {!domainValidated && (
+            {!domainValidated && (
+              <div className="flex justify-center">
                 <Button size="lg" onClick={handleValidateDomain} disabled={!selectedDomain}>
                   Valider
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-              )}
-              {domainValidated && !domainCorrect && (
-                <Button size="lg" variant="outline" onClick={handleRetryDomain}>
-                  Réessayer
-                </Button>
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* Affiche la bonne réponse si faux */}
+            {domainValidated && !domainCorrect && (
+              <div className="mt-4 p-3 bg-muted rounded-lg text-sm">
+                <p className="font-medium text-muted-foreground">Bonne réponse :</p>
+                <p>C. Solutions ERP personnalisées et transformation digitale des PME tunisiennes</p>
+              </div>
+            )}
           </div>
         )}
 
@@ -269,8 +258,8 @@ qualité du travail et la compréhension des besoins des entreprises.
               ))}
             </div>
 
-            <div className="flex flex-col items-center gap-4">
-              {!valuesValidated && (
+            {!valuesValidated && (
+              <div className="flex justify-center">
                 <Button
                   size="lg"
                   onClick={handleValidateValues}
@@ -279,36 +268,24 @@ qualité du travail et la compréhension des besoins des entreprises.
                   Valider
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-              )}
+              </div>
+            )}
 
-{hasValidated && !isCorrect && (
-  <div className="mt-6 p-4 bg-muted rounded-xl">
-    <p className="text-sm font-medium text-muted-foreground mb-2">Bonne réponse :</p>
-    <div className="space-y-2">
-      {mailBlocks.map((block, index) => (
-        <div key={block.id} className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">{index + 1}.</span>
-          <span>{block.content}</span>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-
-              {valuesValidated && valuesCorrect && (
-                <div className="text-center">
-                  <div className="bg-success/10 border border-success/20 rounded-xl p-4 mb-4">
-                    <p className="text-success font-medium">
-                      Parfait ! Vous êtes prêt(e) pour votre entretien chez TechTunis.
-                    </p>
-                  </div>
-                  <Button size="lg" variant="success" onClick={handleContinue}>
-                    Passer au niveau suivant
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+            {/* Affiche les bonnes réponses après validation */}
+            {valuesValidated && (
+              <div className="mt-4 p-3 bg-muted rounded-lg">
+                <p className="font-medium text-muted-foreground mb-2">Bonnes réponses :</p>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  {valueOptions
+                    .filter(v => v.isCorrect)
+                    .map(v => (
+                      <div key={v.id} className="flex items-center gap-1">
+                        <span>✓</span> {v.label}
+                      </div>
+                    ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
       </div>
