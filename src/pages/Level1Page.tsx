@@ -40,7 +40,6 @@ export default function Level1Page() {
   const [domainValidated, setDomainValidated] = useState(false);
   const [valuesValidated, setValuesValidated] = useState(false);
   const [domainCorrect, setDomainCorrect] = useState(false);
-  const [valuesCorrect, setValuesCorrect] = useState(false);
 
   // Prevent back navigation
   useEffect(() => {
@@ -72,23 +71,18 @@ export default function Level1Page() {
 
   // ✅ ÉTAPE 1 : Validation du domaine
   const handleValidateDomain = () => {
-    const isCorrect = selectedDomain === 'C'; // seule option correcte
+    const isCorrect = selectedDomain === 'C';
     setDomainCorrect(isCorrect);
     setDomainValidated(true);
 
-    const domainScore = isCorrect ? 10 : 0;
-    // On ne sauvegarde pas encore — on attend l'étape 2
-
     if (isCorrect) {
       toast.success("Excellent choix !");
-      setTimeout(() => setStep(2), 1500);
     } else {
       toast.error("Mauvais choix. La bonne réponse vous sera affichée.");
-      // Affiche la bonne réponse puis passe à l'étape 2 après 2s
-      setTimeout(() => {
-        setStep(2);
-      }, 2000);
     }
+
+    // Passe à l'étape 2 après 1.5s
+    setTimeout(() => setStep(2), 1500);
   };
 
   // ✅ ÉTAPE 2 : Validation des valeurs
@@ -98,21 +92,23 @@ export default function Level1Page() {
       return;
     }
 
-    const correctValues = valueOptions.filter(v => v.isCorrect).map(v => v.id);
-    let score = 0;
+    setValuesValidated(true);
+
+    // Calcul du score pour les valeurs
+    const correctValueIds = valueOptions.filter(v => v.isCorrect).map(v => v.id);
+    let valuesScore = 0;
     selectedValues.forEach(id => {
-      if (correctValues.includes(id)) {
-        score += 2.5;
+      if (correctValueIds.includes(id)) {
+        valuesScore += 2.5;
       }
     });
 
-    const valuesScore = score; // entre 0 et 10
     const domainScore = domainCorrect ? 10 : 0;
     const totalScore = domainScore + valuesScore;
 
     completeLevel(1, totalScore);
 
-    // Affiche feedback
+    // Feedback
     if (totalScore === 20) {
       toast.success(`Félicitations ! ${totalScore}/20 points.`);
     } else if (totalScore >= 10) {
@@ -121,10 +117,8 @@ export default function Level1Page() {
       toast.warning(`${totalScore}/20 points. Révisez l'entreprise.`);
     }
 
-    // ➡️ Passe automatiquement au niveau 2 après 2s
-    setTimeout(() => {
-      navigate('/niveau-2');
-    }, 2000);
+    // Passage automatique au niveau 2
+    setTimeout(() => navigate('/niveau-2'), 2000);
   };
 
   return (
@@ -245,7 +239,7 @@ export default function Level1Page() {
                     valuesValidated && option.isCorrect && selectedValues.includes(option.id) && "border-success bg-success/5",
                     valuesValidated && !option.isCorrect && selectedValues.includes(option.id) && "border-destructive bg-destructive/5"
                   )}
-                  onClick={() => toggleValue(option.id)}
+                  onClick={() => !valuesValidated && toggleValue(option.id)}
                 >
                   <Checkbox
                     checked={selectedValues.includes(option.id)}
@@ -271,18 +265,30 @@ export default function Level1Page() {
               </div>
             )}
 
-            {/* Affiche les bonnes réponses après validation */}
+            {/* 🔥 Affichage détaillé des bonnes/mauvaises réponses */}
             {valuesValidated && (
               <div className="mt-4 p-3 bg-muted rounded-lg">
-                <p className="font-medium text-muted-foreground mb-2">Bonnes réponses :</p>
+                <p className="font-medium text-muted-foreground mb-2">Récapitulatif :</p>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  {valueOptions
-                    .filter(v => v.isCorrect)
-                    .map(v => (
-                      <div key={v.id} className="flex items-center gap-1">
-                        <span>✓</span> {v.label}
+                  {valueOptions.map(option => {
+                    const isSelected = selectedValues.includes(option.id);
+                    const isCorrect = option.isCorrect;
+                    
+                    return (
+                      <div 
+                        key={option.id}
+                        className={cn(
+                          "flex items-center gap-1 p-2 rounded",
+                          isCorrect && isSelected && "bg-green-100 border border-green-300",
+                          isCorrect && !isSelected && "bg-green-50 text-green-800",
+                          !isCorrect && isSelected && "bg-red-100 border border-red-300",
+                          !isCorrect && !isSelected && "text-muted-foreground"
+                        )}
+                      >
+                        {isCorrect ? '✓' : '✗'} {option.label}
                       </div>
-                    ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
