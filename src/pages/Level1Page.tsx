@@ -70,27 +70,25 @@ export default function Level1Page() {
     });
   };
 
-  // 🔥 CORRIGÉ : Passe toujours à l'étape 2 après validation
-  const handleValidateDomain = () => {
-    if (!selectedDomain) {
-      toast.error('Veuillez sélectionner une réponse');
-      return;
-    }
+const handleValidate = () => {
+  const correctOrder = mailBlocks.map(b => b.id);
+  const currentOrder = blocks.map(b => b.id);
+  const isAnswerCorrect = correctOrder.every((id, index) => id === currentOrder[index]);
 
-    const correct = domainOptions.find((d) => d.id === selectedDomain)?.isCorrect || false;
-    setDomainValidated(true);
-    setDomainCorrect(correct);
-    setLevel2Domain(selectedDomain);
+  const score = isAnswerCorrect ? 20 : 0;
+  completeLevel(1, score); // Sauvegarde immédiatement
 
-    if (correct) {
-      toast.success('Bonne réponse ! +10 points');
-    } else {
-      toast.error('Ce n\'est pas la bonne réponse. 0 point.');
-    }
+  if (isAnswerCorrect) {
+    toast.success("Excellent ! Vous maîtrisez la structure d'un mail professionnel.");
+  } else {
+    toast.error("La réponse est incorrecte. La bonne réponse vous sera affichée.");
+  }
 
-    // 🔥 Toujours passer à l'étape 2 après 1.5s, même en cas d'erreur
-    setTimeout(() => setStep(2), 1500);
-  };
+  // ➡️ Passe automatiquement au niveau 2 après 2 secondes
+  setTimeout(() => {
+    navigate('/niveau-2');
+  }, 2000);
+};
 
   const handleValidateValues = () => {
     if (selectedValues.length !== 4) {
@@ -283,18 +281,19 @@ qualité du travail et la compréhension des besoins des entreprises.
                 </Button>
               )}
 
-              {valuesValidated && !valuesCorrect && (
-                <div className="text-center">
-                  <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-4">
-                    <p className="text-destructive font-medium">
-                      ❌ Réponse échoue.
-                    </p>
-                  </div>
-                  <Button size="lg" variant="outline" onClick={handleRetryValues}>
-                    Réessayer
-                  </Button>
-                </div>
-              )}
+{hasValidated && !isCorrect && (
+  <div className="mt-6 p-4 bg-muted rounded-xl">
+    <p className="text-sm font-medium text-muted-foreground mb-2">Bonne réponse :</p>
+    <div className="space-y-2">
+      {mailBlocks.map((block, index) => (
+        <div key={block.id} className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">{index + 1}.</span>
+          <span>{block.content}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
               {valuesValidated && valuesCorrect && (
                 <div className="text-center">
