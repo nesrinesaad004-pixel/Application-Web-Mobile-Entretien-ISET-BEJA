@@ -48,7 +48,7 @@ export default function ResultPage() {
     { level: 2, title: "Le Bilan de Soi", score: gameState.levelScores[2] || 0 },
     { level: 3, title: "L'Invitation", score: gameState.levelScores[3] || 0 },
     { level: 4, title: "L'Entretien", score: gameState.levelScores[4] || 0 },
-    { level: 5, title: "Gestion de Crise", score: gameState.levelScores[5] || 0 },
+    { level: 5, title: "Répondre efficacement", score: gameState.levelScores[5] || 0 },
   ];
 
   // Auto-évaluation locale (affichée à l'écran seulement)
@@ -57,7 +57,7 @@ export default function ResultPage() {
     { id: 'bilan', label: 'Le Bilan de Soi' },
     { id: 'invitation', label: "L'Invitation" },
     { id: 'entretien', label: "L'Entretien" },
-    { id: 'crise', label: 'La Gestion de Crise' },
+    { id: 'crise', label: 'Répondre efficacement' },
   ];
 
   const toggleDifficulty = (id: string) => {
