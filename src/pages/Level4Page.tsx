@@ -8,6 +8,7 @@ import { GameTimer } from '@/components/game/GameTimer';
 import { ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 // Import new avatar images
 import avatarProfessionnel from '@/assets/avatars/avatar-professionnel.jpg';
