@@ -43,8 +43,10 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 export default function Level2Page() {
   const navigate = useNavigate();
   const { completeLevel } = useGame();
+  
   const [selectedQualities, setSelectedQualities] = useState<string[]>([]);
   const [hasValidated, setHasValidated] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
 
   // Shuffle qualities once on mount
@@ -84,7 +86,7 @@ export default function Level2Page() {
       return;
     }
 
-    // 🔥 Calcul du score : +5 pour chaque bonne, -5 pour chaque mauvaise
+    // Calcul du score : +5 / -5, mais on sauvegarde le score réel (0 min)
     let calculatedScore = 0;
     selectedQualities.forEach(id => {
       const quality = baseQualities.find(q => q.id === id);
@@ -97,26 +99,26 @@ export default function Level2Page() {
       }
     });
 
-    // Empêche le score négatif
-    calculatedScore = Math.max(0, calculatedScore);
+    const totalScore = Math.max(0, calculatedScore); // min 0
+    setScore(totalScore);
 
-    setScore(calculatedScore);
+    // Vérifie si toutes les 4 sont correctes
+    const correctIds = baseQualities.filter(q => q.isCorrect).map(q => q.id);
+    const allCorrect = correctIds.every(id => selectedQualities.includes(id));
+
+    setIsCorrect(allCorrect);
     setHasValidated(true);
-    completeLevel(2, calculatedScore);
+    completeLevel(2, totalScore);
 
-    // Feedback immédiat
-    if (calculatedScore === 20) {
-      toast.success(`Excellent ! ${calculatedScore}/20 points.`);
-    } else if (calculatedScore >= 10) {
-      toast.info(`Bon travail ! ${calculatedScore}/20 points.`);
+    if (allCorrect) {
+      toast.success('Excellent ! Vous avez identifié les 4 qualités essentielles ! +20 points');
     } else {
-      toast.warning(`${calculatedScore}/20 points. Révisez vos qualités !`);
+      toast.error('Ce n\'est pas tout à fait correct.');
     }
+  };
 
-    // ➡️ Passage automatique au niveau 3 après 2 secondes
-    setTimeout(() => {
-      navigate('/niveau-3');
-    }, 2000);
+  const handleContinueToNextLevel = () => {
+    navigate('/niveau-3');
   };
 
   return (
@@ -191,24 +193,24 @@ export default function Level2Page() {
           </div>
         )}
 
-        {/* 🔥 Affichage des bonnes réponses après validation */}
-        {hasValidated && (
+        {/* 🔥 Affichage des bonnes réponses SEULEMENT si faux */}
+        {hasValidated && !isCorrect && (
           <div className="mt-6 p-4 bg-muted rounded-xl animate-fade-in">
-            <p className="font-medium text-muted-foreground mb-3">Récapitulatif des réponses :</p>
+            <p className="font-medium text-muted-foreground mb-3">Bonnes réponses :</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {baseQualities.map(quality => {
                 const isSelected = selectedQualities.includes(quality.id);
                 const isCorrect = quality.isCorrect;
-                
+
                 return (
-                  <div 
+                  <div
                     key={quality.id}
                     className={`p-3 rounded-lg text-center ${
-                      isCorrect && isSelected 
-                        ? 'bg-green-100 border border-green-300' 
-                        : isCorrect && !isSelected 
+                      isCorrect && isSelected
+                        ? 'bg-green-100 border border-green-300'
+                        : isCorrect && !isSelected
                           ? 'bg-green-50 text-green-800'
-                          : !isCorrect && isSelected 
+                          : !isCorrect && isSelected
                             ? 'bg-red-100 border border-red-300'
                             : 'bg-gray-50 text-gray-500'
                     }`}
@@ -223,6 +225,20 @@ export default function Level2Page() {
                 );
               })}
             </div>
+          </div>
+        )}
+
+        {/* ✅ Bouton "Passer à l’étape suivante" après validation */}
+        {hasValidated && (
+          <div className="flex justify-center mt-6">
+            <Button
+              size="lg"
+              variant="default"
+              onClick={handleContinueToNextLevel}
+            >
+              Passer à l’étape suivante
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
           </div>
         )}
       </div>
