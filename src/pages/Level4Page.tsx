@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { LevelHeader } from '@/components/game/LevelHeader';
 import { ProgressBar } from '@/components/game/ProgressBar';
 import { GameTimer } from '@/components/game/GameTimer';
-import { ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowRight, ArrowUp, ArrowDown, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
@@ -57,6 +57,8 @@ export default function Level4Page() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [avatarValidated, setAvatarValidated] = useState(false);
   const [avatarCorrect, setAvatarCorrect] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showContinueButton, setShowContinueButton] = useState(false);
 
   // Prevent back navigation
   useEffect(() => {
@@ -121,8 +123,30 @@ export default function Level4Page() {
 
     if (correct) {
       toast.success('Excellent ! Votre pitch est parfaitement structuré ! +10 points');
+      
+      // 🔥 Lance l'audio
+      setIsPlaying(true);
+      setShowContinueButton(false);
+
+      const fullText = blocks.map(b => b.content).join(' ');
+      const utterance = new SpeechSynthesisUtterance(fullText);
+      utterance.lang = 'fr-FR';
+      utterance.rate = 0.9;
+
+      utterance.onend = () => {
+        setIsPlaying(false);
+        setShowContinueButton(true);
+      };
+
+      utterance.onerror = () => {
+        setIsPlaying(false);
+        setShowContinueButton(true);
+      };
+
+      speechSynthesis.speak(utterance);
     } else {
       toast.error('L\'ordre n\'est pas optimal.');
+      setShowContinueButton(true); // Affiche directement le bouton si faux
     }
   };
 
@@ -143,6 +167,9 @@ export default function Level4Page() {
 
     navigate('/niveau-5');
   };
+
+  // ✅ Toujours afficher l'avatar correct dans l'étape 2
+  const correctAvatar = avatars.find(a => a.isCorrect)!;
 
   return (
     <div className="min-h-screen bg-background px-4 py-8">
@@ -206,11 +233,11 @@ export default function Level4Page() {
                 <p className="font-medium text-muted-foreground">Bonne réponse :</p>
                 <div className="flex items-center gap-3 mt-2">
                   <img 
-                    src={avatars.find(a => a.isCorrect)?.image} 
+                    src={correctAvatar.image} 
                     alt="Tenue soignée" 
                     className="w-12 h-12 rounded-full object-cover" 
                   />
-                  <span>Soigné – Tenue professionnelle</span>
+                  <span>{correctAvatar.label} – Tenue professionnelle</span>
                 </div>
               </div>
             )}
@@ -231,9 +258,10 @@ export default function Level4Page() {
         {step === 2 && (
           <div className="animate-fade-in">
             <div className="flex items-center justify-center gap-4 mb-6">
+              {/* ✅ Toujours afficher l'avatar CORRECT */}
               <img 
-                src={avatars.find(a => a.id === selectedAvatar)?.image} 
-                alt="Avatar" 
+                src={correctAvatar.image} 
+                alt="Avatar professionnel"
                 className="w-16 h-16 rounded-2xl object-cover shadow-lg"
               />
               <div>
@@ -310,36 +338,41 @@ export default function Level4Page() {
               </div>
             )}
 
-            {/* Après validation */}
-            {hasValidated && (
-              <>
-                {/* 🔥 Affiche la bonne réponse SEULEMENT si faux */}
-                {!isCorrect && (
-                  <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-2xl">
-                    <p className="font-medium text-muted-foreground mb-3">Bonne réponse :</p>
-                    <div className="space-y-2">
-                      {pitchBlocks.map((block, index) => (
-                        <div key={block.id} className="p-3 rounded-lg bg-background border">
-                          <span className="text-xs font-bold text-muted-foreground mr-2">{index + 1}.</span>
-                          {block.content}
-                        </div>
-                      ))}
+            {/* 🔥 Affiche la bonne réponse SEULEMENT si faux */}
+            {hasValidated && !isCorrect && (
+              <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-2xl">
+                <p className="font-medium text-muted-foreground mb-3">Bonne réponse :</p>
+                <div className="space-y-2">
+                  {pitchBlocks.map((block, index) => (
+                    <div key={block.id} className="p-3 rounded-lg bg-background border">
+                      <span className="text-xs font-bold text-muted-foreground mr-2">{index + 1}.</span>
+                      {block.content}
                     </div>
-                  </div>
-                )}
-
-                {/* ✅ Bouton "Passer au niveau suivant" */}
-                <div className="flex justify-center mt-6">
-                  <Button 
-                    size="lg" 
-                    variant={isCorrect ? "success" : "default"}
-                    onClick={handleContinueToNextLevel}
-                  >
-                    Passer au niveau suivant
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  ))}
                 </div>
-              </>
+              </div>
+            )}
+
+            {/* 🔈 Indicateur d'attente pendant l'audio */}
+            {hasValidated && isCorrect && isPlaying && (
+              <div className="flex flex-col items-center gap-2 mt-6">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">😊 Lecture en cours…</p>
+              </div>
+            )}
+
+            {/* ✅ Bouton "Passer" après audio (ou immédiatement si faux) */}
+            {hasValidated && showContinueButton && (
+              <div className="flex justify-center mt-6">
+                <Button 
+                  size="lg" 
+                  variant={isCorrect ? "success" : "default"}
+                  onClick={handleContinueToNextLevel}
+                >
+                  Passer au niveau suivant
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
             )}
           </div>
         )}
