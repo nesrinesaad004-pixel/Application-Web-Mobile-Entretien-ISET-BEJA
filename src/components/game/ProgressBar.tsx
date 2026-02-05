@@ -1,12 +1,19 @@
 import { cn } from '@/lib/utils';
 import { LevelIndicator } from './LevelIndicator';
 
+// 🔥 Ajoute cette constante
+const levels = [
+  { level: 1, title: "L'Investigation" },
+  { level: 2, title: "Le Bilan de Soi" },
+  { level: 3, title: "L'Invitation" },
+  { level: 4, title: "L'Entretien" },
+  { level: 5, title: "Gestion de crise" },
+];
+
 interface ProgressBarProps {
   currentLevel: number;
   completedLevels: number[];
 }
-
-
 
 export function ProgressBar({ currentLevel, completedLevels }: ProgressBarProps) {
   const progress = (completedLevels.length / levels.length) * 100;
