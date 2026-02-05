@@ -10,8 +10,9 @@ import { Label } from '@/components/ui/label';
 import { ArrowRight, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
-// ✅ 8 questions 
+// ✅ 8 questions — avec corrections sur q6 et q7
 const scenarios = [
   {
     id: 'q1',
@@ -73,33 +74,33 @@ const scenarios = [
     question: 'Vous envisagez plusieurs sujets de Projet de Fin d’Études. Comment procédez-vous pour faire un choix pertinent avant de démarrer votre stage chez nous ?',
     options: [
       { id: 'a', label: 'Je compare les sujets en fonction de mes compétences actuelles, de ce que je peux apprendre et du temps disponible pour le PFE.', isCorrect: true },
-      { id: 'b', label: ' Je choisis le sujet qui paraît le plus impressionnant, même si je ne le maîtrise pas encore', isCorrect: false },
-      { id: 'c', label: ' Je prends le même sujet que mes camarades pour éviter les difficultés.', isCorrect: false },
-      { id: 'd', label: 'J’échange avec mon encadrant afin d’évaluer la faisabilité du sujet et son intérêt professionne.', isCorrect: true },
-      { id: 'e', label: '  Je choisis rapidement un sujet pour aller plus vite, sans analyse approfondie..', isCorrect: false },
+      { id: 'b', label: 'Je choisis le sujet qui paraît le plus impressionnant, même si je ne le maîtrise pas encore', isCorrect: false },
+      { id: 'c', label: 'Je prends le même sujet que mes camarades pour éviter les difficultés.', isCorrect: false },
+      { id: 'd', label: 'J’échange avec mon encadrant afin d’évaluer la faisabilité du sujet et son intérêt professionnel.', isCorrect: true },
+      { id: 'e', label: 'Je choisis rapidement un sujet pour aller plus vite, sans analyse approfondie.', isCorrect: false },
     ],
-    multipleAnswers: false,
+    multipleAnswers: true, // ✅ CORRIGÉ
   },
   {
     id: 'q7',
     question: 'Quels critères prenez-vous en compte pour juger qu’un sujet de PFE est pertinent et intéressant pour un stage en entreprise ?',
     options: [
       { id: 'a', label: 'L’adéquation du sujet avec ma spécialité et mon projet professionnel.', isCorrect: true },
-      { id: 'b', label:  'Le fait que le sujet soit très à la mode, même si je ne le maîtrise pas bien.', isCorrect: false },
-      { id: 'c', label: ' La faisabilité du sujet dans le temps imparti du PF', isCorrect: true },
-      { id: 'd', label: ' Le nombre d’étudiants ayant déjà choisi le même sujet.', isCorrect: false },
-       { id: 'e', label: '  La possibilité de valoriser ce sujet lors d’un entretien ou sur mon CV..', isCorrect: true },
+      { id: 'b', label: 'Le fait que le sujet soit très à la mode, même si je ne le maîtrise pas bien.', isCorrect: false },
+      { id: 'c', label: 'La faisabilité du sujet dans le temps imparti du PFE.', isCorrect: true },
+      { id: 'd', label: 'Le nombre d’étudiants ayant déjà choisi le même sujet.', isCorrect: false },
+      { id: 'e', label: 'La possibilité de valoriser ce sujet lors d’un entretien ou sur mon CV.', isCorrect: true },
     ],
-    multipleAnswers: false,
+    multipleAnswers: true, // ✅ CORRIGÉ
   },
   {
     id: 'q8',
-    question: 'Dans le cadre de votre Projet de Fin d’Études, comment envisagez-vous l’utilisation de l’intelligence artificielle',
+    question: 'Dans le cadre de votre Projet de Fin d’Études, comment envisagez-vous l’utilisation de l’intelligence artificielle ?',
     options: [
       { id: 'a', label: 'L’IA réalisera la majorité du travail technique à ma place', isCorrect: false },
-      { id: 'b', label: ' Je préfère ne pas utiliser l’IA pour éviter tout risque', isCorrect: false },
-      { id: 'c', label: ' J’utilise l’IA comme outil d’aide à la réflexion et à la recherche, tout en restant responsable de mon travai', isCorrect: true },
-      { id: 'd', label: 'Je travaille seul et je n’intègre ni l’IA ni les recommandations de mon encadrant. .', isCorrect: false },
+      { id: 'b', label: 'Je préfère ne pas utiliser l’IA pour éviter tout risque', isCorrect: false },
+      { id: 'c', label: 'J’utilise l’IA comme outil d’aide à la réflexion et à la recherche, tout en restant responsable de mon travail', isCorrect: true },
+      { id: 'd', label: 'Je travaille seul et je n’intègre ni l’IA ni les recommandations de mon encadrant.', isCorrect: false },
     ],
     multipleAnswers: false,
   },
@@ -170,18 +171,15 @@ export default function Level5Page() {
   };
 
   const handleNext = () => {
-    // 🔥 Enregistre le résultat de la question actuelle
     const newResults = [...questionResults, isCorrect];
     setQuestionResults(newResults);
 
     if (isLastScenario) {
-      // ✅ Score final : 2.5 × nombre de bonnes réponses
       const totalCorrect = newResults.filter(Boolean).length;
-      const totalScore = totalCorrect * 2.5; // 0 → 20
+      const totalScore = totalCorrect * 2.5; // 8 × 2.5 = 20
 
       completeLevel(5, totalScore);
 
-      // 🔔 Feedback final
       if (totalScore === 20) {
         toast.success(`Félicitations ! Vous avez obtenu ${totalScore}/20 points au niveau 5.`);
       } else if (totalScore >= 12.5) {
@@ -192,7 +190,6 @@ export default function Level5Page() {
 
       navigate('/auto-evaluation');
     } else {
-      // Passe à la question suivante
       setCurrentScenario(prev => prev + 1);
       setSelectedAnswers([]);
       setHasValidated(false);
@@ -247,7 +244,7 @@ export default function Level5Page() {
                 <p className="text-sm text-muted-foreground">Question {currentScenario + 1}/{scenarios.length}</p>
                 {scenario.multipleAnswers && (
                   <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                    Plusieurs réponses possibles
+                    Sélectionnez toutes les bonnes réponses
                   </span>
                 )}
               </div>
