@@ -23,27 +23,18 @@ export default function IdentificationPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const validateForm = () => {
-    if (!formData.nom.trim()) {
-      toast.error('Veuillez entrer votre nom');
-      return false;
-    }
-    if (!formData.prenom.trim()) {
-      toast.error('Veuillez entrer votre prénom');
-      return false;
-    }
-    if (!formData.professorEmail.trim()) {
-      toast.error('Veuillez entrer l\'email du professeur');
-      return false;
-    }
-    // Vérifie le format de l'email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.professorEmail)) {
-      toast.error('Veuillez entrer un email valide');
-      return false;
-    }
-    return true;
-  };
+const validateForm = () => {
+  if (!formData.nom.trim()) {
+    toast.error('Veuillez entrer votre nom');
+    return false;
+  }
+  if (!formData.prenom.trim()) {
+    toast.error('Veuillez entrer votre prénom');
+    return false;
+  }
+  // ✅ Pas de validation d'email — il est fixe et valide
+  return true;
+};
 
   const handleSubmit = () => {
     if (!validateForm()) return;
