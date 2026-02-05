@@ -25,8 +25,7 @@ export default function AutoEvaluationPage() {
     { id: 'investigation', label: "L'Investigation" },
     { id: 'bilan', label: 'Le Bilan de Soi' },
     { id: 'invitation', label: "L'Invitation" },
-    { id: 'entretien', label: "L'Entretien" },
-    { id: 'crise', label: 'La Gestion de Crise' },
+    { id: 'entretien', labe:"Répondre efficacement" },
      { id: 'Aucun', label: 'Aucun' },
   ];
 
