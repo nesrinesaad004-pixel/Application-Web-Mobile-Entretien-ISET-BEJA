@@ -8,7 +8,6 @@ import { GameTimer } from '@/components/game/GameTimer';
 import { ArrowRight, Mail, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
 
 const mailBlocks = [
   { id: 'salutation', content: 'Chère Madame Fatma,', order: 1 },
@@ -26,7 +25,6 @@ export default function Level3Page() {
   );
   const [isCorrect, setIsCorrect] = useState(false);
   const [hasValidated, setHasValidated] = useState(false);
-  const [isPlayingAndNavigating, setIsPlayingAndNavigating] = useState(false);
 
   // Prevent back navigation
   useEffect(() => {
@@ -67,43 +65,21 @@ export default function Level3Page() {
     if (correct) {
       toast.success('Bravo ! Votre réponse est claire et professionnelle !');
     } else {
-      toast.error('L\'ordre n\'est pas correct. La bonne réponse vous est affichée ci-dessous.');
+      toast.error('L\'ordre n\'est pas correct.');
     }
   };
 
-  const handleContinue = () => {
+  const handleContinueToNextLevel = () => {
     const totalScore = isCorrect ? 20 : 0;
     completeLevel(3, totalScore);
 
-    if (isCorrect) {
+    if (totalScore === 20) {
       toast.success(`Excellent ! Vous avez obtenu ${totalScore}/20 points au niveau 3.`);
-      
-      // 🔥 Lance l'audio SEULEMENT si correct
-      setIsPlayingAndNavigating(true);
-      
-      const fullText = blocks.map(b => b.content).join(' ');
-      const utterance = new SpeechSynthesisUtterance(fullText);
-      utterance.lang = 'fr-FR';
-      utterance.rate = 0.9;
-
-      utterance.onend = () => {
-        navigate('/niveau-4');
-      };
-
-      utterance.onerror = () => {
-        setTimeout(() => navigate('/niveau-4'), 1500);
-      };
-
-      speechSynthesis.speak(utterance);
     } else {
-      // ❌ Pas d'audio si faux
       toast.warning(`Vous avez obtenu ${totalScore}/20 points au niveau 3.`);
-      
-      // ➡️ Passe directement au niveau 4
-      setTimeout(() => {
-        navigate('/niveau-4');
-      }, 1500);
     }
+
+    navigate('/niveau-4');
   };
 
   return (
@@ -220,44 +196,37 @@ export default function Level3Page() {
             </Button>
           )}
 
-          {hasValidated && (
-            <>
-              {/* 🔥 Bonne réponse toujours affichée */}
-              <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-2xl">
-                <p className="font-medium text-muted-foreground mb-3">Bonne réponse :</p>
-                <div className="space-y-2">
-                  {mailBlocks.map((block, index) => (
-                    <div 
-                      key={block.id} 
-                      className="p-3 rounded-lg bg-background border"
-                    >
-                      <span className="text-xs font-bold text-muted-foreground mr-2">
-                        {index + 1}.
-                      </span>
-                      {block.content}
-                    </div>
-                  ))}
-                </div>
+          {/* 🔥 Affiche la bonne réponse SEULEMENT si faux */}
+          {hasValidated && !isCorrect && (
+            <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-2xl">
+              <p className="font-medium text-muted-foreground mb-3">Bonne réponse :</p>
+              <div className="space-y-2">
+                {mailBlocks.map((block, index) => (
+                  <div 
+                    key={block.id} 
+                    className="p-3 rounded-lg bg-background border"
+                  >
+                    <span className="text-xs font-bold text-muted-foreground mr-2">
+                      {index + 1}.
+                    </span>
+                    {block.content}
+                  </div>
+                ))}
               </div>
+            </div>
+          )}
 
-              {/* Bouton unique avec gestion audio conditionnelle */}
-              {isCorrect && isPlayingAndNavigating ? (
-                <div className="flex flex-col items-center gap-2 mt-4">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  <p className="text-sm text-muted-foreground">😊 Lecture en cours…</p>
-                </div>
-              ) : (
-                <Button 
-                  size="lg" 
-                  variant={isCorrect ? "success" : "default"}
-                  onClick={handleContinue}
-                  className="mt-4"
-                >
-                  Passer au niveau suivant
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              )}
-            </>
+          {/* ✅ Bouton "Passer au niveau suivant" après validation */}
+          {hasValidated && (
+            <Button 
+              size="lg" 
+              variant={isCorrect ? "success" : "default"}
+              onClick={handleContinueToNextLevel}
+              className="mt-4"
+            >
+              Passer au niveau suivant
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
           )}
         </div>
       </div>
