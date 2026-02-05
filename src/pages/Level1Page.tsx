@@ -120,7 +120,17 @@ export default function Level1Page() {
     // Passage automatique au niveau 2
     setTimeout(() => navigate('/niveau-2'), 2000);
   };
+<div className="flex items-center justify-between mb-8">
+  <div className="flex-1">
+    <ProgressBar currentLevel={1} completedLevels={[]} />
+  </div>
+  <div className="ml-4">
+    <GameTimer />
+  </div>
+</div>
 
+{/* ⚠️ Supprime cette ligne : */}
+{/* <Button variant="ghost" size="sm" className="text-sm">Se connaître</Button> */}
   return (
     <div className="h-screen bg-background px-4 py-4 overflow-y-auto">
       <div className="max-w-4xl mx-auto">
