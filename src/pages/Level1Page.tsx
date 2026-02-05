@@ -276,30 +276,18 @@ export default function Level1Page() {
               </div>
             )}
 
-            {/* 🔥 Affichage détaillé des bonnes/mauvaises réponses */}
-            {valuesValidated && (
+            {/* 🔥 Affiche les bonnes réponses SEULEMENT si faux */}
+            {valuesValidated && !valuesCorrect && (
               <div className="mt-4 p-3 bg-muted rounded-lg">
-                <p className="font-medium text-muted-foreground mb-2">Récapitulatif :</p>
+                <p className="font-medium text-muted-foreground mb-2">Bonnes réponses :</p>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  {valueOptions.map(option => {
-                    const isSelected = selectedValues.includes(option.id);
-                    const isCorrect = option.isCorrect;
-                    
-                    return (
-                      <div 
-                        key={option.id}
-                        className={cn(
-                          "flex items-center gap-1 p-2 rounded",
-                          isCorrect && isSelected && "bg-green-100 border border-green-300",
-                          isCorrect && !isSelected && "bg-green-50 text-green-800",
-                          !isCorrect && isSelected && "bg-red-100 border border-red-300",
-                          !isCorrect && !isSelected && "text-muted-foreground"
-                        )}
-                      >
-                        {isCorrect ? '✓' : '✗'} {option.label}
+                  {valueOptions
+                    .filter(v => v.isCorrect)
+                    .map(option => (
+                      <div key={option.id} className="flex items-center gap-1 p-2 bg-green-50 text-green-800 rounded">
+                        ✓ {option.label}
                       </div>
-                    );
-                  })}
+                    ))}
                 </div>
               </div>
             )}
