@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '@/context/GameContext';
 import { Button } from '@/components/ui/button';
-
+import { LevelHeader } from '@/components/game/LevelHeader';
 import { ProgressBar } from '@/components/game/ProgressBar';
 import { GameTimer } from '@/components/game/GameTimer';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
