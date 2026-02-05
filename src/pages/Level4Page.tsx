@@ -8,7 +8,6 @@ import { GameTimer } from '@/components/game/GameTimer';
 import { ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
 
 // Import new avatar images
 import avatarProfessionnel from '@/assets/avatars/avatar-professionnel.jpg';
@@ -57,7 +56,6 @@ export default function Level4Page() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [avatarValidated, setAvatarValidated] = useState(false);
   const [avatarCorrect, setAvatarCorrect] = useState(false);
-  const [isPlayingAndNavigating, setIsPlayingAndNavigating] = useState(false);
 
   // Prevent back navigation
   useEffect(() => {
@@ -91,11 +89,8 @@ export default function Level4Page() {
     if (isCorrect) {
       toast.success('Excellent choix ! +10 points');
     } else {
-      toast.error('Cette tenue n\'est pas appropriée. La bonne réponse vous est affichée.');
+      toast.error('Cette tenue n\'est pas appropriée.');
     }
-
-    // ➡️ Passage automatique à l'étape 2 après 1.5s
-    setTimeout(() => setStep(2), 1500);
   };
 
   // Move block up or down using buttons (mobile-friendly)
@@ -124,39 +119,26 @@ export default function Level4Page() {
     if (correct) {
       toast.success('Excellent ! Votre pitch est parfaitement structuré ! +10 points');
     } else {
-      toast.error('L\'ordre n\'est pas optimal. La bonne réponse vous est affichée.');
+      toast.error('L\'ordre n\'est pas optimal.');
     }
   };
 
-  const handleContinue = () => {
+  const handleContinueToNextLevel = () => {
     const avatarScore = avatarCorrect ? 10 : 0;
     const pitchScore = isCorrect ? 10 : 0;
     const totalScore = avatarScore + pitchScore;
+
     completeLevel(4, totalScore);
 
     if (totalScore === 20) {
       toast.success(`Excellent ! Vous avez obtenu ${totalScore}/20 points au niveau 4.`);
+    } else if (totalScore >= 10) {
+      toast.info(`Bon travail ! ${totalScore}/20 points.`);
     } else {
-      toast.warning(`Vous avez obtenu ${totalScore}/20 points au niveau 4.`);
+      toast.warning(`${totalScore}/20 points. Révisez votre présentation !`);
     }
 
-    if (isCorrect) {
-      // 🔥 Audio SEULEMENT si pitch correct
-      setIsPlayingAndNavigating(true);
-      
-      const pitchText = blocks.map(b => b.content).join(' ');
-      const utterance = new SpeechSynthesisUtterance(pitchText);
-      utterance.lang = 'fr-FR';
-      utterance.rate = 0.9;
-
-      utterance.onend = () => navigate('/niveau-5');
-      utterance.onerror = () => setTimeout(() => navigate('/niveau-5'), 1500);
-
-      speechSynthesis.speak(utterance);
-    } else {
-      // ❌ Pas d'audio si pitch faux
-      setTimeout(() => navigate('/niveau-5'), 1500);
-    }
+    navigate('/niveau-5');
   };
 
   return (
@@ -215,8 +197,8 @@ export default function Level4Page() {
               </div>
             )}
 
-            {/* Affichage de la bonne réponse après validation */}
-            {avatarValidated && (
+            {/* 🔥 Affiche la bonne réponse SEULEMENT si faux */}
+            {avatarValidated && !avatarCorrect && (
               <div className="mt-4 p-3 bg-muted rounded-lg">
                 <p className="font-medium text-muted-foreground">Bonne réponse :</p>
                 <div className="flex items-center gap-3 mt-2">
@@ -227,6 +209,16 @@ export default function Level4Page() {
                   />
                   <span>Soigné – Tenue professionnelle</span>
                 </div>
+              </div>
+            )}
+
+            {/* ✅ Bouton "Passer à l’étape suivante" après validation */}
+            {avatarValidated && (
+              <div className="flex justify-center mt-6">
+                <Button size="lg" variant="default" onClick={() => setStep(2)}>
+                  Passer à l’étape suivante
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
             )}
           </div>
@@ -242,7 +234,7 @@ export default function Level4Page() {
                 className="w-16 h-16 rounded-2xl object-cover shadow-lg"
               />
               <div>
-                <h2 className="text-xl font-display font-semibold text-foreground">
+h2 className="text-xl font-display font-semibold text-foreground">
                   Construisez votre pitch de présentation
                 </h2>
                 <p className="text-muted-foreground">
@@ -318,36 +310,32 @@ export default function Level4Page() {
             {/* Après validation */}
             {hasValidated && (
               <>
-                {/* Bonne réponse */}
-                <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-2xl">
-                  <p className="font-medium text-muted-foreground mb-3">Bonne réponse :</p>
-                  <div className="space-y-2">
-                    {pitchBlocks.map((block, index) => (
-                      <div key={block.id} className="p-3 rounded-lg bg-background border">
-                        <span className="text-xs font-bold text-muted-foreground mr-2">{index + 1}.</span>
-                        {block.content}
-                      </div>
-                    ))}
+                {/* 🔥 Affiche la bonne réponse SEULEMENT si faux */}
+                {(!isCorrect) && (
+                  <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-2xl">
+                    <p className="font-medium text-muted-foreground mb-3">Bonne réponse :</p>
+                    <div className="space-y-2">
+                      {pitchBlocks.map((block, index) => (
+                        <div key={block.id} className="p-3 rounded-lg bg-background border">
+                          <span className="text-xs font-bold text-muted-foreground mr-2">{index + 1}.</span>
+                          {block.content}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Bouton unique */}
-                {isCorrect && isPlayingAndNavigating ? (
-                  <div className="flex flex-col items-center gap-2 mt-4">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">😊 Lecture en cours…</p>
-                  </div>
-                ) : (
+                {/* ✅ Bouton "Passer au niveau suivant" */}
+                <div className="flex justify-center mt-6">
                   <Button 
                     size="lg" 
-                    variant="default" 
-                    onClick={handleContinue}
-                    className="mt-4"
+                    variant={isCorrect ? "success" : "default"}
+                    onClick={handleContinueToNextLevel}
                   >
                     Passer au niveau suivant
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
-                )}
+                </div>
               </>
             )}
           </div>
