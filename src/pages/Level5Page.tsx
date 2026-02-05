@@ -11,7 +11,7 @@ import { ArrowRight, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
-// ✅ 8 questions (comme dans le PDF)
+// ✅ 8 questions 
 const scenarios = [
   {
     id: 'q1',
@@ -70,34 +70,36 @@ const scenarios = [
   },
   {
     id: 'q6',
-    question: 'Vous avez terminé votre tâche avant l\'échéance. Que faites-vous ?',
+    question: 'Vous envisagez plusieurs sujets de Projet de Fin d’Études. Comment procédez-vous pour faire un choix pertinent avant de démarrer votre stage chez nous ?',
     options: [
-      { id: 'a', label: 'Je me repose en attendant la prochaine tâche.', isCorrect: false },
-      { id: 'b', label: 'J\'offre mon aide à un collègue ou je propose d\'améliorer la documentation / tests.', isCorrect: true },
-      { id: 'c', label: 'Je signale immédiatement à mon responsable que je suis libre pour éviter toute surcharge.', isCorrect: false },
-      { id: 'd', label: 'Je commence une nouvelle tâche sans validation pour gagner du temps.', isCorrect: false },
+      { id: 'a', label: 'Je compare les sujets en fonction de mes compétences actuelles, de ce que je peux apprendre et du temps disponible pour le PFE.', isCorrect: true },
+      { id: 'b', label: ' Je choisis le sujet qui paraît le plus impressionnant, même si je ne le maîtrise pas encore', isCorrect: false },
+      { id: 'c', label: ' Je prends le même sujet que mes camarades pour éviter les difficultés.', isCorrect: false },
+      { id: 'd', label: 'J’échange avec mon encadrant afin d’évaluer la faisabilité du sujet et son intérêt professionne.', isCorrect: true },
+      { id: 'e', label: '  Je choisis rapidement un sujet pour aller plus vite, sans analyse approfondie..', isCorrect: false },
     ],
     multipleAnswers: false,
   },
   {
     id: 'q7',
-    question: 'Votre collègue commet une erreur qui pourrait affecter le projet. Que faites-vous ?',
+    question: 'Quels critères prenez-vous en compte pour juger qu’un sujet de PFE est pertinent et intéressant pour un stage en entreprise ?',
     options: [
-      { id: 'a', label: 'Je la signale directement au responsable sans en parler à mon collègue.', isCorrect: false },
-      { id: 'b', label: 'Je lui en parle en privé, avec bienveillance, et je propose de l\'aider à corriger.', isCorrect: true },
-      { id: 'c', label: 'Je corrige l\'erreur moi-même sans lui dire, pour éviter le conflit.', isCorrect: false },
-      { id: 'd', label: 'Je l\'ignore, ce n\'est pas mon problème.', isCorrect: false },
+      { id: 'a', label: 'L’adéquation du sujet avec ma spécialité et mon projet professionnel.', isCorrect: true },
+      { id: 'b', label:  'Le fait que le sujet soit très à la mode, même si je ne le maîtrise pas bien.', isCorrect: false },
+      { id: 'c', label: ' La faisabilité du sujet dans le temps imparti du PF', isCorrect: true },
+      { id: 'd', label: ' Le nombre d’étudiants ayant déjà choisi le même sujet.', isCorrect: false },
+       { id: 'e', label: '  La possibilité de valoriser ce sujet lors d’un entretien ou sur mon CV..', isCorrect: true },
     ],
     multipleAnswers: false,
   },
   {
     id: 'q8',
-    question: 'Vous avez une idée d\'amélioration pour un outil utilisé par l\'équipe. Que faites-vous ?',
+    question: 'Dans le cadre de votre Projet de Fin d’Études, comment envisagez-vous l’utilisation de l’intelligence artificielle',
     options: [
-      { id: 'a', label: 'Je la garde pour moi, au cas où je dois faire un bon coup plus tard.', isCorrect: false },
-      { id: 'b', label: 'Je la partage avec l\'équipe lors d\'une réunion ou via un ticket, en expliquant les bénéfices.', isCorrect: true },
-      { id: 'c', label: 'Je la propose directement au chef sans consulter l\'équipe.', isCorrect: false },
-      { id: 'd', label: 'Je l\'implémente moi-même sans validation, pour gagner du temps.', isCorrect: false },
+      { id: 'a', label: 'L’IA réalisera la majorité du travail technique à ma place', isCorrect: false },
+      { id: 'b', label: ' Je préfère ne pas utiliser l’IA pour éviter tout risque', isCorrect: false },
+      { id: 'c', label: ' J’utilise l’IA comme outil d’aide à la réflexion et à la recherche, tout en restant responsable de mon travai', isCorrect: true },
+      { id: 'd', label: 'Je travaille seul et je n’intègre ni l’IA ni les recommandations de mon encadrant. .', isCorrect: false },
     ],
     multipleAnswers: false,
   },
