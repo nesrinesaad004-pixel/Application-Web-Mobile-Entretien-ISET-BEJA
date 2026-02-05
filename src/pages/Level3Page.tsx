@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { LevelHeader } from '@/components/game/LevelHeader';
 import { ProgressBar } from '@/components/game/ProgressBar';
 import { GameTimer } from '@/components/game/GameTimer';
-import { ArrowRight, Mail, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowRight, Mail, ArrowUp, ArrowDown, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
@@ -26,6 +26,8 @@ export default function Level3Page() {
   );
   const [isCorrect, setIsCorrect] = useState(false);
   const [hasValidated, setHasValidated] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showContinueButton, setShowContinueButton] = useState(false);
 
   // Prevent back navigation
   useEffect(() => {
@@ -65,29 +67,35 @@ export default function Level3Page() {
 
     if (correct) {
       toast.success('Bravo ! Votre réponse est claire et professionnelle !');
+      
+      // 🔥 Lance l'audio
+      setIsPlaying(true);
+      setShowContinueButton(false);
 
-      // 🔥 Lecture audio automatique
       const fullText = blocks.map(b => b.content).join(' ');
       const utterance = new SpeechSynthesisUtterance(fullText);
       utterance.lang = 'fr-FR';
       utterance.rate = 0.9;
 
       utterance.onend = () => {
-        navigate('/niveau-4');
+        setIsPlaying(false);
+        setShowContinueButton(true); // Affiche le bouton après l'audio
       };
 
       utterance.onerror = () => {
-        setTimeout(() => navigate('/niveau-4'), 1500);
+        setIsPlaying(false);
+        setShowContinueButton(true);
       };
 
       speechSynthesis.speak(utterance);
     } else {
       toast.error('L\'ordre n\'est pas correct.');
-      // Affiche la bonne réponse, puis passe au niveau 4 après 1.5s
-      setTimeout(() => {
-        navigate('/niveau-4');
-      }, 1500);
+      setShowContinueButton(true); // Affiche directement le bouton si faux
     }
+  };
+
+  const handleContinue = () => {
+    navigate('/niveau-4');
   };
 
   return (
@@ -222,6 +230,24 @@ export default function Level3Page() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* 🔈 Indicateur d'attente pendant l'audio */}
+        {hasValidated && isCorrect && isPlaying && (
+          <div className="flex flex-col items-center gap-2 mt-6">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">😊 Lecture en cours…</p>
+          </div>
+        )}
+
+        {/* ✅ Bouton "Passer" après audio (ou immédiatement si faux) */}
+        {hasValidated && showContinueButton && (
+          <div className="flex justify-center mt-6">
+            <Button size="lg" variant="default" onClick={handleContinue}>
+              Passer au niveau suivant
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
           </div>
         )}
       </div>
