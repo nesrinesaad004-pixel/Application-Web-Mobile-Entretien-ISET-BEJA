@@ -20,12 +20,12 @@ export default function AutoEvaluationPage() {
   const [selfEvaluation, setSelfEvaluation] = useState<string | null>(null);
   const [difficulties, setDifficulties] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const difficultyOptions = [
     { id: 'investigation', label: "L'Investigation" },
     { id: 'bilan', label: 'Le Bilan de Soi' },
     { id: 'invitation', label: "L'Invitation" },
-    { id: 'entretien', labe:"Répondre efficacement" },
+    { id: 'entretien', label: "L'Entretien" },
+    { id: 'crise', label: "Répondre efficacement" },
      { id: 'Aucun', label: 'Aucun' },
   ];
 
