@@ -4,10 +4,10 @@ interface LevelHeaderProps {
   levelNumber: number;
   title: string;
   objective: string;
-  
+  character?: string;
 }
 
-export function LevelHeader({ levelNumber, title, objective }: LevelHeaderProps) {
+export function LevelHeader({ levelNumber, title, objective, character }: LevelHeaderProps) {
   return (
     <div className="text-center mb-8 animate-fade-in">
       {/* Badge du niveau */}
@@ -26,7 +26,11 @@ export function LevelHeader({ levelNumber, title, objective }: LevelHeaderProps)
         <p className="text-muted-foreground">
           <span className="font-semibold text-foreground">Objectif :</span> {objective}
         </p>
-       
+        {character && (
+          <p className="text-sm text-muted-foreground mt-2 italic">
+            — {character}
+          </p>
+        )}
       </div>
     </div>
   );
