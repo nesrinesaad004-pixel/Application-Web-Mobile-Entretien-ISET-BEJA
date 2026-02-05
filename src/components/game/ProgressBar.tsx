@@ -43,13 +43,7 @@ export function ProgressBar({ currentLevel, completedLevels }: ProgressBarProps)
         </div>
       </div>
 
-      {/* Current level info */}
-      <div className="text-center">
-        <p className="text-sm text-muted-foreground">
-          Niveau {currentLevel} sur {levels.length}
-        </p>
-        
-      </div>
+   
     </div>
   );
 }
