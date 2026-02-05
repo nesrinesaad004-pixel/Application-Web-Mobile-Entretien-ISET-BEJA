@@ -121,24 +121,21 @@ export default function IdentificationPage() {
               </SelectContent>
             </Select>
           </div>
-
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-foreground mb-2">Email du professeur</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                type="email"
-                name="professorEmail"
-                value={formData.professorEmail}
-                onChange={handleChange}
-                placeholder="entretien@iset.tn"
-                className="pl-10 w-full"
-              />
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-foreground mb-2">Email du professeur</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  type="email"
+                  value="isetentretien499@gmail.com"
+                  readOnly
+                  className="pl-10 w-full bg-muted/50 cursor-not-allowed"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Les résultats seront envoyés à cette adresse (non modifiable)
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Les résultats seront envoyés à cette adresse
-            </p>
-          </div>
 
           <Button
             size="lg"
