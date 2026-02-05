@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { LevelHeader } from '@/components/game/LevelHeader';
 import { ProgressBar } from '@/components/game/ProgressBar';
 import { GameTimer } from '@/components/game/GameTimer';
-import { ArrowRight, Mail, ArrowUp, ArrowDown, Volume2 } from 'lucide-react';
+import { ArrowRight, Mail, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+
 const mailBlocks = [
   { id: 'salutation', content: 'Chère Madame Fatma,', order: 1 },
   { id: 'remerciement', content: 'Je vous remercie de votre invitation et je confirme ma présence à l\'entretien de stage PFE à TechTunis.', order: 2 },
@@ -25,7 +26,6 @@ export default function Level3Page() {
   );
   const [isCorrect, setIsCorrect] = useState(false);
   const [hasValidated, setHasValidated] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   // Prevent back navigation
   useEffect(() => {
@@ -60,41 +60,34 @@ export default function Level3Page() {
     setIsCorrect(correct);
     setHasValidated(true);
 
-    if (correct) {
-      toast.success('Bravo ! Votre réponse est claire et professionnelle !');
-    } else {
-      toast.error('L\'ordre n\'est pas correct.');
-    }
-  };
-
-  const playAudio = () => {
-    if (!('speechSynthesis' in window)) {
-      toast.info("La lecture audio n'est pas prise en charge sur cet appareil.");
-      return;
-    }
-
-    const fullText = blocks.map(b => b.content).join(' ');
-    const utterance = new SpeechSynthesisUtterance(fullText);
-    utterance.lang = 'fr-FR';
-    utterance.rate = 0.9;
-    utterance.onend = () => setIsPlaying(false);
-    utterance.onerror = () => setIsPlaying(false);
-
-    setIsPlaying(true);
-    speechSynthesis.speak(utterance);
-  };
-
-  const handleContinueToNextLevel = () => {
-    const totalScore = isCorrect ? 20 : 0;
+    const totalScore = correct ? 20 : 0;
     completeLevel(3, totalScore);
 
-    if (totalScore === 20) {
-      toast.success(`Excellent ! Vous avez obtenu ${totalScore}/20 points au niveau 3.`);
-    } else {
-      toast.warning(`Vous avez obtenu ${totalScore}/20 points au niveau 3.`);
-    }
+    if (correct) {
+      toast.success('Bravo ! Votre réponse est claire et professionnelle !');
 
-    navigate('/niveau-4');
+      // 🔥 Lecture audio automatique
+      const fullText = blocks.map(b => b.content).join(' ');
+      const utterance = new SpeechSynthesisUtterance(fullText);
+      utterance.lang = 'fr-FR';
+      utterance.rate = 0.9;
+
+      utterance.onend = () => {
+        navigate('/niveau-4');
+      };
+
+      utterance.onerror = () => {
+        setTimeout(() => navigate('/niveau-4'), 1500);
+      };
+
+      speechSynthesis.speak(utterance);
+    } else {
+      toast.error('L\'ordre n\'est pas correct.');
+      // Affiche la bonne réponse, puis passe au niveau 4 après 1.5s
+      setTimeout(() => {
+        navigate('/niveau-4');
+      }, 1500);
+    }
   };
 
   return (
@@ -202,58 +195,35 @@ export default function Level3Page() {
           </div>
         </div>
 
-        {/* Validation / Actions */}
-        <div className="flex flex-col items-center gap-4">
-          {!hasValidated && (
+        {/* Validation */}
+        {!hasValidated && (
+          <div className="flex justify-center">
             <Button size="lg" onClick={handleValidate}>
               Valider l'ordre
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-          )}
+          </div>
+        )}
 
-          {/* 🔥 Affiche la bonne réponse SEULEMENT si faux */}
-          {hasValidated && !isCorrect && (
-            <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-2xl">
-              <p className="font-medium text-muted-foreground mb-3">Bonne réponse :</p>
-              <div className="space-y-2">
-                {mailBlocks.map((block, index) => (
-                  <div 
-                    key={block.id} 
-                    className="p-3 rounded-lg bg-background border"
-                  >
-                    <span className="text-xs font-bold text-muted-foreground mr-2">
-                      {index + 1}.
-                    </span>
-                    {block.content}
-                  </div>
-                ))}
-              </div>
+        {/* 🔥 Affiche la bonne réponse SEULEMENT si faux */}
+        {hasValidated && !isCorrect && (
+          <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-2xl">
+            <p className="font-medium text-muted-foreground mb-3">Bonne réponse :</p>
+            <div className="space-y-2">
+              {mailBlocks.map((block, index) => (
+                <div 
+                  key={block.id} 
+                  className="p-3 rounded-lg bg-background border"
+                >
+                  <span className="text-xs font-bold text-muted-foreground mr-2">
+                    {index + 1}.
+                  </span>
+                  {block.content}
+                </div>
+              ))}
             </div>
-          )}
-
-          {/* 🔈 Bouton audio SI correct */}
-          {hasValidated && isCorrect && (
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <Button variant="outline" size="lg" onClick={playAudio} className="gap-2">
-                <Volume2 className="h-5 w-5" />
-                {isPlaying ? "Lecture en cours..." : "Écouter mon mail"}
-              </Button>
-            </div>
-          )}
-
-          {/* ✅ Bouton "Passer au niveau suivant" */}
-          {hasValidated && (
-            <Button 
-              size="lg" 
-              variant={isCorrect ? "success" : "default"}
-              onClick={handleContinueToNextLevel}
-              className="mt-2"
-            >
-              Passer au niveau suivant
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
