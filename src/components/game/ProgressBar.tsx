@@ -48,9 +48,7 @@ export function ProgressBar({ currentLevel, completedLevels }: ProgressBarProps)
         <p className="text-sm text-muted-foreground">
           Niveau {currentLevel} sur {levels.length}
         </p>
-        <p className="text-lg font-display font-semibold text-foreground mt-1">
-          {levels.find(l => l.level === currentLevel)?.title || "Terminé"}
-        </p>
+        
       </div>
     </div>
   );
