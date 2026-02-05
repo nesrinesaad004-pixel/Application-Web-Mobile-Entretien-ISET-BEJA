@@ -113,6 +113,8 @@ export default function Level4Page() {
   };
 
   const handleValidate = () => {
+    if (blocks.length !== 4) return;
+
     const correct = checkOrder();
     setIsCorrect(correct);
     setHasValidated(true);
@@ -235,7 +237,7 @@ export default function Level4Page() {
                 className="w-16 h-16 rounded-2xl object-cover shadow-lg"
               />
               <div>
-h2 className="text-xl font-display font-semibold text-foreground">
+                <h2 className="text-xl font-display font-semibold text-foreground">
                   Construisez votre pitch de présentation
                 </h2>
                 <p className="text-muted-foreground">
@@ -312,7 +314,7 @@ h2 className="text-xl font-display font-semibold text-foreground">
             {hasValidated && (
               <>
                 {/* 🔥 Affiche la bonne réponse SEULEMENT si faux */}
-                {(!isCorrect) && (
+                {!isCorrect && (
                   <div className="mt-6 p-4 bg-muted rounded-xl w-full max-w-2xl">
                     <p className="font-medium text-muted-foreground mb-3">Bonne réponse :</p>
                     <div className="space-y-2">
