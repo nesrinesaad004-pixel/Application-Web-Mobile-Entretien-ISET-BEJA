@@ -40,6 +40,7 @@ export default function Level1Page() {
   const [domainValidated, setDomainValidated] = useState(false);
   const [valuesValidated, setValuesValidated] = useState(false);
   const [domainCorrect, setDomainCorrect] = useState(false);
+  const [valuesCorrect, setValuesCorrect] = useState(false);
 
   // Prevent back navigation
   useEffect(() => {
@@ -78,11 +79,8 @@ export default function Level1Page() {
     if (isCorrect) {
       toast.success("Excellent choix !");
     } else {
-      toast.error("Mauvais choix. La bonne réponse vous sera affichée.");
+      toast.error("Mauvais choix.");
     }
-
-    // Passe à l'étape 2 après 1.5s
-    setTimeout(() => setStep(2), 1500);
   };
 
   // ✅ ÉTAPE 2 : Validation des valeurs
@@ -92,40 +90,50 @@ export default function Level1Page() {
       return;
     }
 
+    const correctValues = valueOptions.filter((v) => v.isCorrect).map((v) => v.id);
+    const allCorrect = correctValues.every((v) => selectedValues.includes(v));
+
+    setValuesCorrect(allCorrect);
     setValuesValidated(true);
 
-    // Calcul du score pour les valeurs
-    const correctValueIds = valueOptions.filter(v => v.isCorrect).map(v => v.id);
-    let valuesScore = 0;
-    selectedValues.forEach(id => {
-      if (correctValueIds.includes(id)) {
-        valuesScore += 2.5;
-      }
-    });
+    if (allCorrect) {
+      toast.success('Excellent ! +10 points');
+    } else {
+      toast.error('Ce n\'est pas tout à fait correct.');
+    }
+  };
 
+  // 🔥 Calcul final du score et passage au niveau 2
+  const handleContinueToNextLevel = () => {
     const domainScore = domainCorrect ? 10 : 0;
+    const valuesScore = valuesCorrect ? 10 : 0;
     const totalScore = domainScore + valuesScore;
 
     completeLevel(1, totalScore);
 
-    // Feedback
     if (totalScore === 20) {
       toast.success(`Félicitations ! ${totalScore}/20 points.`);
     } else if (totalScore >= 10) {
       toast.info(`Bon travail ! ${totalScore}/20 points.`);
     } else {
-      toast.warning(`${totalScore}/20 points. Révisez l'entreprise.`);
+      toast.warning(`${totalScore}/20 points. Révisez l'entreprise !`);
     }
 
-    // Passage automatique au niveau 2
-    setTimeout(() => navigate('/niveau-2'), 2000);
+    navigate('/niveau-2');
   };
 
   return (
     <div className="h-screen bg-background px-4 py-4 overflow-y-auto">
       <div className="max-w-4xl mx-auto">
-        {/* Progress and Timer */}
-        
+        {/* ✅ Progress and Timer — TOUJOURS EN HAUT */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex-1">
+            <ProgressBar currentLevel={1} completedLevels={[]} />
+          </div>
+          <div className="ml-4">
+            <GameTimer />
+          </div>
+        </div>
 
         {/* Level Header */}
         <LevelHeader
@@ -199,11 +207,21 @@ export default function Level1Page() {
               </div>
             )}
 
-            {/* Affiche la bonne réponse si faux */}
+            {/* 🔥 Affiche la bonne réponse SEULEMENT si faux */}
             {domainValidated && !domainCorrect && (
               <div className="mt-4 p-3 bg-muted rounded-lg text-sm">
                 <p className="font-medium text-muted-foreground">Bonne réponse :</p>
                 <p>C. Solutions ERP personnalisées et transformation digitale des PME tunisiennes</p>
+              </div>
+            )}
+
+            {/* ✅ Bouton "Passer à l'étape suivante" après validation */}
+            {domainValidated && (
+              <div className="flex justify-center mt-6">
+                <Button size="lg" variant="default" onClick={() => setStep(2)}>
+                  Passer à l’étape suivante
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
             )}
           </div>
@@ -283,6 +301,16 @@ export default function Level1Page() {
                     );
                   })}
                 </div>
+              </div>
+            )}
+
+            {/* ✅ Bouton "Passer au niveau suivant" après validation */}
+            {valuesValidated && (
+              <div className="flex justify-center mt-6">
+                <Button size="lg" variant="default" onClick={handleContinueToNextLevel}>
+                  Passer au niveau suivant
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
             )}
           </div>
