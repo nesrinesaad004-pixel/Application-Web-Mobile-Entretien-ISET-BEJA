@@ -11,7 +11,7 @@ import { ArrowRight, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
-// Questions du PDF - avec réponses multiples possibles
+// ✅ 8 questions (comme dans le PDF)
 const scenarios = [
   {
     id: 'q1',
@@ -42,7 +42,7 @@ const scenarios = [
       { id: 'a', label: 'Je lui dis que je suis débordé et qu\'il a qu\'à se débrouiller tout seul.', isCorrect: false },
       { id: 'b', label: 'Je regarde rapidement son problème et je lui indique où chercher ou je bloque 15-20 min plus tard dans la journée pour l\'aider.', isCorrect: true },
       { id: 'c', label: 'Je l\'aide immédiatement en mettant mon propre travail de côté, même si ça me met en retard.', isCorrect: false },
-      { id: 'd', label: " Je lui dis d'attendre que le chef le remarque puis je décide de l’aider .", isCorrect: false },
+      { id: 'd', label: "Je lui dis d'attendre que le chef le remarque puis je décide de l’aider.", isCorrect: false },
     ],
     multipleAnswers: false,
   },
@@ -68,6 +68,39 @@ const scenarios = [
     ],
     multipleAnswers: false,
   },
+  {
+    id: 'q6',
+    question: 'Vous avez terminé votre tâche avant l\'échéance. Que faites-vous ?',
+    options: [
+      { id: 'a', label: 'Je me repose en attendant la prochaine tâche.', isCorrect: false },
+      { id: 'b', label: 'J\'offre mon aide à un collègue ou je propose d\'améliorer la documentation / tests.', isCorrect: true },
+      { id: 'c', label: 'Je signale immédiatement à mon responsable que je suis libre pour éviter toute surcharge.', isCorrect: false },
+      { id: 'd', label: 'Je commence une nouvelle tâche sans validation pour gagner du temps.', isCorrect: false },
+    ],
+    multipleAnswers: false,
+  },
+  {
+    id: 'q7',
+    question: 'Votre collègue commet une erreur qui pourrait affecter le projet. Que faites-vous ?',
+    options: [
+      { id: 'a', label: 'Je la signale directement au responsable sans en parler à mon collègue.', isCorrect: false },
+      { id: 'b', label: 'Je lui en parle en privé, avec bienveillance, et je propose de l\'aider à corriger.', isCorrect: true },
+      { id: 'c', label: 'Je corrige l\'erreur moi-même sans lui dire, pour éviter le conflit.', isCorrect: false },
+      { id: 'd', label: 'Je l\'ignore, ce n\'est pas mon problème.', isCorrect: false },
+    ],
+    multipleAnswers: false,
+  },
+  {
+    id: 'q8',
+    question: 'Vous avez une idée d\'amélioration pour un outil utilisé par l\'équipe. Que faites-vous ?',
+    options: [
+      { id: 'a', label: 'Je la garde pour moi, au cas où je dois faire un bon coup plus tard.', isCorrect: false },
+      { id: 'b', label: 'Je la partage avec l\'équipe lors d\'une réunion ou via un ticket, en expliquant les bénéfices.', isCorrect: true },
+      { id: 'c', label: 'Je la propose directement au chef sans consulter l\'équipe.', isCorrect: false },
+      { id: 'd', label: 'Je l\'implémente moi-même sans validation, pour gagner du temps.', isCorrect: false },
+    ],
+    multipleAnswers: false,
+  },
 ];
 
 export default function Level5Page() {
@@ -78,7 +111,6 @@ export default function Level5Page() {
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [hasValidated, setHasValidated] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-  // 🔥 Stocke le résultat de chaque question (true/false)
   const [questionResults, setQuestionResults] = useState<boolean[]>([]);
 
   const scenario = scenarios[currentScenario];
@@ -94,7 +126,6 @@ export default function Level5Page() {
     
     window.history.pushState(null, '', window.location.pathname);
     window.addEventListener('popstate', handlePopState);
-    
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
@@ -126,14 +157,13 @@ export default function Level5Page() {
       selectedSet.size === correctSet.size && 
       [...selectedSet].every(id => correctSet.has(id));
 
-    setHasValidated(true);
     setIsCorrect(isAnswerCorrect);
+    setHasValidated(true);
 
     if (isAnswerCorrect) {
-      toast.success('Bonne réponse ! +4 points');
+      toast.success('Bonne réponse ! +2.5 points');
     } else {
-      // 🔥 Pas de révélation des bonnes réponses
-      toast.error('Mauvaise réponse. Réessayez la prochaine fois !');
+      toast.error('Mauvaise réponse.');
     }
   };
 
@@ -143,16 +173,16 @@ export default function Level5Page() {
     setQuestionResults(newResults);
 
     if (isLastScenario) {
-      // 🔥 Calcule le score total : 4 points par bonne réponse
+      // ✅ Score final : 2.5 × nombre de bonnes réponses
       const totalCorrect = newResults.filter(Boolean).length;
-      const totalScore = totalCorrect * 4; // 0, 4, 8, 12, 16 ou 20
+      const totalScore = totalCorrect * 2.5; // 0 → 20
 
       completeLevel(5, totalScore);
 
-      // 🔥 Affiche le score final
+      // 🔔 Feedback final
       if (totalScore === 20) {
         toast.success(`Félicitations ! Vous avez obtenu ${totalScore}/20 points au niveau 5.`);
-      } else if (totalScore >= 12) {
+      } else if (totalScore >= 12.5) {
         toast.info(`Bon travail ! Vous avez obtenu ${totalScore}/20 points au niveau 5.`);
       } else {
         toast.warning(`Vous avez obtenu ${totalScore}/20 points au niveau 5. Révisez vos réflexes professionnels !`);
@@ -185,7 +215,7 @@ export default function Level5Page() {
         <LevelHeader
           levelNumber={5}
           title="Gestion de Crise"
-          objective="L'équipe de recrutement vous met à l'épreuve avec des situations réalistes. Répondez à 5 QCM qui testent votre logique professionnelle."
+          objective="L'équipe de recrutement vous met à l'épreuve avec des situations réalistes. Répondez à 8 QCM qui testent votre logique professionnelle."
         />
 
         {/* Scenario Progress */}
@@ -254,6 +284,23 @@ export default function Level5Page() {
           </div>
         </div>
 
+        {/* ✅ Affiche la bonne réponse SEULEMENT si faux */}
+        {hasValidated && !isCorrect && (
+          <div className="mt-6 p-4 bg-muted rounded-xl">
+            <p className="font-medium text-muted-foreground mb-3">Bonne(s) réponse(s) :</p>
+            <div className="space-y-2">
+              {scenario.options
+                .filter(o => o.isCorrect)
+                .map(option => (
+                  <div key={option.id} className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span className="text-foreground">{option.label}</span>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
         {/* Actions */}
         <div className="flex flex-col items-center gap-4">
           {!hasValidated && (
@@ -264,7 +311,7 @@ export default function Level5Page() {
           )}
 
           {hasValidated && (
-            <Button size="lg" variant={isCorrect ? "success" : "destructive"} onClick={handleNext}>
+            <Button size="lg" variant={isCorrect ? "success" : "default"} onClick={handleNext}>
               {isLastScenario ? "Passer à l'auto-évaluation" : "Question suivante"}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
