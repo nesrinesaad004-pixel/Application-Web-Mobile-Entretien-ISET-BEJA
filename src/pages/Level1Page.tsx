@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '@/context/GameContext';
 import { Button } from '@/components/ui/button';
-import { LevelHeader } from '@/components/game/LevelHeader';
+
 import { ProgressBar } from '@/components/game/ProgressBar';
 import { GameTimer } from '@/components/game/GameTimer';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -136,10 +136,10 @@ export default function Level1Page() {
         </div>
 
         {/* Level Header */}
-    <LevelHeader
+<LevelHeader
   levelNumber={1}
   title="L'Investigation"
-  objective="Identifier le domaine d'activité et les 4 valeurs fondamentales de TechTunis."
+  objective="Apprendre à analyser une entreprise, comprendre son domaine d'activité et identifier ses valeurs essentielles avant un entretien."
 />
 
         {/* Company Info Card */}
