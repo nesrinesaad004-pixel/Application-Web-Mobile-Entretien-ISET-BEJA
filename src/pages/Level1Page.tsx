@@ -136,11 +136,11 @@ export default function Level1Page() {
         </div>
 
         {/* Level Header */}
-        <LevelHeader
-          levelNumber={1}
-          title="L'Investigation"
-          objective="Apprendre à analyser une entreprise, comprendre son domaine d'activité et identifier ses valeurs essentielles avant un entretien."
-        />
+    <LevelHeader
+  levelNumber={1}
+  title="L'Investigation"
+  objective="Identifier le domaine d'activité et les 4 valeurs fondamentales de TechTunis."
+/>
 
         {/* Company Info Card */}
         <div className="bg-card border border-border rounded-2xl p-6 mb-8 shadow-md animate-fade-in" style={{ animationDelay: '200ms' }}>
