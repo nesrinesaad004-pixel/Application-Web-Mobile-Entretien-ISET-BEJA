@@ -6,13 +6,7 @@ interface ProgressBarProps {
   completedLevels: number[];
 }
 
-const levels = [
-  { level: 1, title: "Se connaître" },
-  { level: 2, title: "Rechercher l'entreprise" },
-  { level: 3, title: "Communiquer" },
-  { level: 4, title: "Se présenter" },
-  { level: 5, title: "Réagir" },
-];
+
 
 export function ProgressBar({ currentLevel, completedLevels }: ProgressBarProps) {
   const progress = (completedLevels.length / levels.length) * 100;
