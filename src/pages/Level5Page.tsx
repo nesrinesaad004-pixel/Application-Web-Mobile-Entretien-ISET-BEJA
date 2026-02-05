@@ -216,7 +216,7 @@ export default function Level5Page() {
         {/* Level Header */}
         <LevelHeader
           levelNumber={5}
-          title="Gestion de Crise"
+          title="Répondre efficacement"
           objective="L'équipe de recrutement vous met à l'épreuve avec des situations réalistes. Répondez à 8 QCM qui testent votre logique professionnelle."
         />
 
