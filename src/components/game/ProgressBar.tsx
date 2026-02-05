@@ -3,11 +3,11 @@ import { LevelIndicator } from './LevelIndicator';
 
 // 🔥 Ajoute cette constante
 const levels = [
-  { level: 1, title: "L'Investigation" },
-  { level: 2, title: "Le Bilan de Soi" },
-  { level: 3, title: "L'Invitation" },
-  { level: 4, title: "L'Entretien" },
-  { level: 5, title: "Gestion de crise" },
+  { level: 1, title: "" },
+  { level: 2, title: "" },
+  { level: 3, title: "" },
+  { level: 4, title: "" },
+  { level: 5, title: "" },
 ];
 
 interface ProgressBarProps {
