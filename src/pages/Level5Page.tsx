@@ -14,63 +14,8 @@ import { Loader2 } from 'lucide-react';
 
 // ✅ 8 questions — avec corrections sur q6 et q7
 const scenarios = [
-  {
+    {
     id: 'q1',
-    question: 'Que faites-vous si votre supérieur vous confie une tâche urgente avant le week-end ?',
-    options: [
-      { id: 'a', label: 'Je vérifie le degré réel d\'urgence et je réorganise mes priorités pour la terminer avant de partir.', isCorrect: true },
-      { id: 'b', label: 'Je refuse poliment en expliquant que c\'est le week-end et que je ne suis pas payé pour faire des heures supp.', isCorrect: false },
-      { id: 'c', label: 'J\'accepte sans poser de questions et je reste jusqu\'à minuit pour la finir, même si je suis épuisé.', isCorrect: false },
-      { id: 'd', label: 'Je clarifie les attentes, l\'échéance exacte et je propose un plan réaliste (éventuellement finir lundi matin si ce n\'est pas critique).', isCorrect: true },
-    ],
-    multipleAnswers: true,
-  },
-  {
-    id: 'q2',
-    question: 'Comment réagissez-vous si vous faites une erreur dans un projet important ?',
-    options: [
-      { id: 'a', label: 'J\'attends que le client ou un collègue le remarque pour ne pas passer pour incompétent.', isCorrect: false },
-      { id: 'b', label: 'J\'informe immédiatement l\'équipe et mon responsable, je documente le problème et je propose une correction.', isCorrect: true },
-      { id: 'c', label: 'Je blâme le collègue qui a fait le code review pour détourner l\'attention.', isCorrect: false },
-      { id: 'd', label: 'Je corrige discrètement le bug sans rien dire à personne pour sauver la face.', isCorrect: false },
-    ],
-    multipleAnswers: false,
-  },
-  {
-    id: 'q3',
-    question: "Un collègue vous demande de l'aide alors que vous êtes très occupé. Que faites-vous ?",
-    options: [
-      { id: 'a', label: 'Je lui dis que je suis débordé et qu\'il a qu\'à se débrouiller tout seul.', isCorrect: false },
-      { id: 'b', label: 'Je regarde rapidement son problème et je lui indique où chercher ou je bloque 15-20 min plus tard dans la journée pour l\'aider.', isCorrect: true },
-      { id: 'c', label: 'Je l\'aide immédiatement en mettant mon propre travail de côté, même si ça me met en retard.', isCorrect: false },
-      { id: 'd', label: "Je lui dis d'attendre que le chef le remarque puis je décide de l’aider.", isCorrect: false },
-    ],
-    multipleAnswers: false,
-  },
-  {
-    id: 'q4',
-    question: 'Comment montrez-vous votre motivation pour ce stage lors de l\'entretien ?',
-    options: [
-      { id: 'a', label: 'En répétant mot pour mot mon CV sans ajouter d\'anecdotes.', isCorrect: false },
-      { id: 'b', label: 'En expliquant pourquoi le domaine du développement et les ERP m\'ont toujours passionné.', isCorrect: true },
-      { id: 'c', label: 'En demandant directement combien je serai payé en tant que stagiaire.', isCorrect: false },
-      { id: 'd', label: 'En donnant des exemples précis de projets personnels ou universitaires que j\'ai réalisés (ex. mini-ERP, application full-stack, etc.).', isCorrect: true },
-    ],
-    multipleAnswers: true,
-  },
-  {
-    id: 'q5',
-    question: 'Que faites-vous si vous ne comprenez pas une consigne donnée par votre supérieur ?',
-    options: [
-      { id: 'a', label: 'Je commence directement le développement en interprétant comme je peux.', isCorrect: false },
-      { id: 'b', label: 'Je pose immédiatement des questions pour clarifier les attentes et je reformule avec mes mots pour valider ma compréhension.', isCorrect: true },
-      { id: 'c', label: 'Je fais exactement ce qu\'il a dit même si ça me semble bizarre, « c\'est le chef qui décide ».', isCorrect: false },
-      { id: 'd', label: 'Je délègue la tâche à un autre stagiaire pour ne pas prendre de risque.', isCorrect: false },
-    ],
-    multipleAnswers: false,
-  },
-  {
-    id: 'q6',
     question: 'Vous envisagez plusieurs sujets de Projet de Fin d’Études. Comment procédez-vous pour faire un choix pertinent avant de démarrer votre stage chez nous ?',
     options: [
       { id: 'a', label: 'Je compare les sujets en fonction de mes compétences actuelles, de ce que je peux apprendre et du temps disponible pour le PFE.', isCorrect: true },
@@ -81,8 +26,8 @@ const scenarios = [
     ],
     multipleAnswers: true, // ✅ CORRIGÉ
   },
-  {
-    id: 'q7',
+    {
+    id: 'q2',
     question: 'Quels critères prenez-vous en compte pour juger qu’un sujet de PFE est pertinent et intéressant pour un stage en entreprise ?',
     options: [
       { id: 'a', label: 'L’adéquation du sujet avec ma spécialité et mon projet professionnel.', isCorrect: true },
@@ -93,8 +38,8 @@ const scenarios = [
     ],
     multipleAnswers: true, // ✅ CORRIGÉ
   },
-  {
-    id: 'q8',
+   {
+    id: 'q3',
     question: 'Dans le cadre de votre Projet de Fin d’Études, comment envisagez-vous l’utilisation de l’intelligence artificielle ?',
     options: [
       { id: 'a', label: 'L’IA réalisera la majorité du travail technique à ma place', isCorrect: false },
@@ -104,6 +49,61 @@ const scenarios = [
     ],
     multipleAnswers: false,
   },
+  {
+    id: 'q4',
+    question: 'Que faites-vous si votre supérieur vous confie une tâche urgente avant le week-end ?',
+    options: [
+      { id: 'a', label: 'Je vérifie le degré réel d\'urgence et je réorganise mes priorités pour la terminer avant de partir.', isCorrect: true },
+      { id: 'b', label: 'Je refuse poliment en expliquant que c\'est le week-end et que je ne suis pas payé pour faire des heures supp.', isCorrect: false },
+      { id: 'c', label: 'J\'accepte sans poser de questions et je reste jusqu\'à minuit pour la finir, même si je suis épuisé.', isCorrect: false },
+      { id: 'd', label: 'Je clarifie les attentes, l\'échéance exacte et je propose un plan réaliste (éventuellement finir lundi matin si ce n\'est pas critique).', isCorrect: true },
+    ],
+    multipleAnswers: true,
+  },
+  {
+    id: 'q5',
+    question: 'Comment réagissez-vous si vous faites une erreur dans un projet important ?',
+    options: [
+      { id: 'a', label: 'J\'attends que le client ou un collègue le remarque pour ne pas passer pour incompétent.', isCorrect: false },
+      { id: 'b', label: 'J\'informe immédiatement l\'équipe et mon responsable, je documente le problème et je propose une correction.', isCorrect: true },
+      { id: 'c', label: 'Je blâme le collègue qui a fait le code review pour détourner l\'attention.', isCorrect: false },
+      { id: 'd', label: 'Je corrige discrètement le bug sans rien dire à personne pour sauver la face.', isCorrect: false },
+    ],
+    multipleAnswers: false,
+  },
+  {
+    id: 'q6',
+    question: "Un collègue vous demande de l'aide alors que vous êtes très occupé. Que faites-vous ?",
+    options: [
+      { id: 'a', label: 'Je lui dis que je suis débordé et qu\'il a qu\'à se débrouiller tout seul.', isCorrect: false },
+      { id: 'b', label: 'Je regarde rapidement son problème et je lui indique où chercher ou je bloque 15-20 min plus tard dans la journée pour l\'aider.', isCorrect: true },
+      { id: 'c', label: 'Je l\'aide immédiatement en mettant mon propre travail de côté, même si ça me met en retard.', isCorrect: false },
+      { id: 'd', label: "Je lui dis d'attendre que le chef le remarque puis je décide de l’aider.", isCorrect: false },
+    ],
+    multipleAnswers: false,
+  },
+  {
+    id: 'q7',
+    question: 'Comment montrez-vous votre motivation pour ce stage lors de l\'entretien ?',
+    options: [
+      { id: 'a', label: 'En répétant mot pour mot mon CV sans ajouter d\'anecdotes.', isCorrect: false },
+      { id: 'b', label: 'En expliquant pourquoi le domaine du développement et les ERP m\'ont toujours passionné.', isCorrect: true },
+      { id: 'c', label: 'En demandant directement combien je serai payé en tant que stagiaire.', isCorrect: false },
+      { id: 'd', label: 'En donnant des exemples précis de projets personnels ou universitaires que j\'ai réalisés (ex. mini-ERP, application full-stack, etc.).', isCorrect: true },
+    ],
+    multipleAnswers: true,
+  },
+  {
+    id: 'q8',
+    question: 'Que faites-vous si vous ne comprenez pas une consigne donnée par votre supérieur ?',
+    options: [
+      { id: 'a', label: 'Je commence directement le développement en interprétant comme je peux.', isCorrect: false },
+      { id: 'b', label: 'Je pose immédiatement des questions pour clarifier les attentes et je reformule avec mes mots pour valider ma compréhension.', isCorrect: true },
+      { id: 'c', label: 'Je fais exactement ce qu\'il a dit même si ça me semble bizarre, « c\'est le chef qui décide ».', isCorrect: false },
+      { id: 'd', label: 'Je délègue la tâche à un autre stagiaire pour ne pas prendre de risque.', isCorrect: false },
+    ],
+    multipleAnswers: false,
+  }, 
 ];
 
 export default function Level5Page() {
